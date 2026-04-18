@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>泊迈生物 · 女性荷尔蒙健康报告</title>
+<style>
+:root {
+  --rose: #C8566A;
+  --rose-mid: #E07A8A;
+  --rose-pale: #FDF0F2;
+  --rose-light: #F5C4CC;
+  --teal: #2D7A6B;
+  --teal-mid: #3D9B87;
+  --teal-pale: #EEF8F6;
+  --teal-light: #A8D8D0;
+  --gold: #C47A30;
+  --gold-pale: #FDF6EE;
+  --gold-light: #F0D4A8;
+  --sky: #3B7AC4;
+  --sky-pale: #EEF3FC;
+  --navy: #1A2E3B;
+  --navy-soft: #243D4F;
+  --slate: #7A9BAD;
+  --slate-light: #C0D4DE;
+  --slate-pale: #EEF4F8;
+  --border: #DDE8EE;
+  --white: #FFFFFF;
+  --ink: #1A2E3B;
+  --good: #2D7A6B;
+  --warn: #C47A30;
+  --bad: #C8566A;
+  --font: -apple-system, 'PingFang SC', 'Helvetica Neue', 'Microsoft YaHei', 'Hiragino Sans GB', sans-serif;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html, body { height:100%; overflow:hidden; }
+body {
+  font-family: var(--font);
+  background: #F7F3EF;
+  color: var(--ink);
+  display: flex; flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── MODE BAR ── */
+.mode-bar {
+  background: var(--navy);
+  padding: 10px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.mode-brand { display: flex; align-items: center; gap: 10px; }
+.mode-mark {
+  width: 34px; height: 34px; background: var(--rose);
+  border-radius: 10px; display: flex; align-items: center;
+  justify-content: center; font-size: 18px; color: white;
+  font-weight: 700;
+}
+.mode-name { color: white; font-size: 14px; font-weight: 700; }
+.mode-sub { color: var(--slate-light); font-size: 10px; margin-top: 1px; }
+
+.mode-toggle {
+  display: flex; background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 20px; padding: 3px; gap: 2px;
+}
+.mode-btn {
+  padding: 5px 11px; border-radius: 16px;
+  font-size: 11px; font-weight: 700; cursor: pointer; border: none;
+  background: transparent; color: rgba(255,255,255,0.5);
+  transition: all 0.2s; font-family: var(--font);
+}
+.mode-btn.active { background: white; color: var(--ink); }
+
+/* ── HERO ── */
+.hero {
+  background: linear-gradient(135deg, var(--navy) 0%, #2D4050 100%);
+  padding: 16px 16px 20px; flex-shrink: 0;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '◌'; position: absolute; right: -20px; top: -20px;
+  font-size: 130px; color: rgba(200,86,106,0.08); font-weight: 300;
+}
+.patient-row {
+  display: flex; align-items: center; gap: 14px; position: relative; z-index: 1;
+}
+.patient-avatar {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--rose-light), var(--rose));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; flex-shrink: 0;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  border: 3px solid rgba(255,255,255,0.15);
+}
+.patient-info { flex: 1; }
+.patient-name { font-size: 22px; font-weight: 800; color: white; }
+.patient-meta { color: var(--slate-light); font-size: 12px; margin-top: 3px; }
+.report-info { text-align: right; flex-shrink: 0; }
+.r-label { color: var(--slate-light); font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; }
+.r-date { color: white; font-size: 12px; font-weight: 700; margin-top: 2px; }
+
+/* Score pills */
+.score-row {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 8px; margin-top: 14px; position: relative; z-index: 1;
+}
+.score-pill {
+  border-radius: 12px; padding: 10px; text-align: center;
+  cursor: pointer; transition: transform 0.2s;
+}
+.score-pill:active { transform: scale(0.96); }
+.score-pill.ovary { background: rgba(200,86,106,0.2); border: 1px solid rgba(200,86,106,0.3); }
+.score-pill.estrogen { background: rgba(196,122,48,0.2); border: 1px solid rgba(196,122,48,0.3); }
+.score-pill.androgen { background: rgba(45,122,107,0.2); border: 1px solid rgba(45,122,107,0.3); }
+.score-icon { font-size: 17px; }
+.score-name { font-size: 9px; color: rgba(255,255,255,0.6); margin-top: 3px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+.score-val { font-size: 22px; font-weight: 900; line-height: 1.1; margin-top: 2px; }
+.score-pill.ovary .score-val { color: var(--rose-mid); }
+.score-pill.estrogen .score-val { color: var(--gold-light); }
+.score-pill.androgen .score-val { color: var(--teal-light); }
+.score-grade { font-size: 10px; font-weight: 700; opacity: 0.7; }
+.score-pill.ovary .score-grade { color: var(--rose-light); }
+.score-pill.estrogen .score-grade { color: var(--gold-light); }
+.score-pill.androgen .score-grade { color: var(--teal-light); }
+
+/* ── TABS ── */
+.tab-bar {
+  background: white; border-bottom: 1px solid var(--border);
+  display: flex; overflow-x: auto; flex-shrink: 0;
+  -webkit-overflow-scrolling: touch;
+}
+.tab-bar::-webkit-scrollbar { display: none; }
+.tab-item {
+  flex: 1; min-width: 72px; padding: 10px 6px;
+  text-align: center; cursor: pointer; border: none; background: none;
+  font-family: var(--font); border-bottom: 3px solid transparent;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  transition: all 0.2s;
+}
+.tab-icon { font-size: 15px; }
+.tab-label { font-size: 10px; font-weight: 700; color: var(--slate); }
+.tab-item.active .tab-label { color: var(--ink); }
+.tab-item.t-rose.active { border-bottom-color: var(--rose); }
+.tab-item.t-rose.active .tab-label { color: var(--rose); }
+.tab-item.t-gold.active { border-bottom-color: var(--gold); }
+.tab-item.t-gold.active .tab-label { color: var(--gold); }
+.tab-item.t-teal.active { border-bottom-color: var(--teal); }
+.tab-item.t-teal.active .tab-label { color: var(--teal); }
+.tab-item.t-sky.active { border-bottom-color: var(--sky); }
+.tab-item.t-sky.active .tab-label { color: var(--sky); }
+.tab-item.t-navy.active { border-bottom-color: var(--navy); }
+.tab-item.t-navy.active .tab-label { color: var(--navy); }
+
+/* ── SCROLL ── */
+.scroll-area {
+  flex: 1; overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 14px 14px 80px;
+}
+.scroll-area::-webkit-scrollbar { display: none; }
+
+/* ── VIEWS ── */
+.view { display: none; }
+.view.active { display: block; animation: fadeUp 0.25s ease; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── PANELS ── */
+.mgmt-panel { display: block; }
+.mgmt-panel.hidden { display: none; }
+.med-panel { display: none; }
+.med-panel.visible { display: block; }
+
+/* ── LABELS ── */
+.sec-label {
+  font-size: 10px; font-weight: 800; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--slate); margin: 16px 0 8px;
+}
+.sec-label:first-child { margin-top: 0; }
+
+/* ── FRIENDLY MSG ── */
+.friendly-msg {
+  border-radius: 14px; padding: 14px 16px; margin-bottom: 10px;
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.friendly-msg.rose { background: linear-gradient(135deg,#FFF8F9,var(--rose-pale)); border: 1.5px solid var(--rose-light); }
+.friendly-msg.gold { background: linear-gradient(135deg,#FFFAF5,var(--gold-pale)); border: 1.5px solid var(--gold-light); }
+.friendly-msg.teal { background: linear-gradient(135deg,#F5FFFE,var(--teal-pale)); border: 1.5px solid var(--teal-light); }
+.friendly-msg.good { background: linear-gradient(135deg,#F5FFFB,#E8F7F1); border: 1.5px solid #A8D8C8; }
+.f-emoji { font-size: 26px; flex-shrink: 0; }
+.f-text { font-size: 13px; line-height: 1.7; }
+.f-text.rose-c { color: #7A2030; }
+.f-text.gold-c { color: #7A4C00; }
+.f-text.teal-c { color: #1A4A40; }
+.f-text strong { font-weight: 800; }
+
+/* ── INDICATOR CARDS ── */
+.ind-card {
+  background: white; border-radius: 14px; border: 1px solid var(--border);
+  padding: 14px 16px; margin-bottom: 8px; cursor: pointer;
+  transition: all 0.2s; border-left: 4px solid var(--border);
+}
+.ind-card.good { border-left-color: var(--good); }
+.ind-card.warn { border-left-color: var(--warn); }
+.ind-card.bad { border-left-color: var(--bad); }
+.ind-card:active { transform: scale(0.99); }
+
+.ind-top { display: flex; align-items: flex-start; justify-content: space-between; }
+.ind-name { font-size: 13px; font-weight: 800; color: var(--ink); }
+.ind-name-en { font-size: 10px; color: var(--slate); font-weight: 600; margin-top: 1px; }
+.ind-tag {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-size: 10px; font-weight: 800; padding: 3px 8px;
+  border-radius: 8px; text-transform: uppercase; flex-shrink: 0; margin-left: 8px;
+}
+.ind-tag.good { background: rgba(45,122,107,0.1); color: var(--good); }
+.ind-tag.warn { background: rgba(196,122,48,0.12); color: var(--gold); }
+.ind-tag.bad { background: rgba(200,86,106,0.1); color: var(--bad); }
+
+.ind-val-row { display: flex; align-items: baseline; gap: 6px; margin: 8px 0 6px; }
+.ind-val { font-size: 26px; font-weight: 900; line-height: 1; }
+.ind-val.good { color: var(--good); }
+.ind-val.warn { color: var(--warn); }
+.ind-val.bad { color: var(--bad); }
+.ind-unit { font-size: 11px; color: var(--slate); font-weight: 600; }
+.ind-ref { font-size: 11px; color: var(--slate); }
+
+/* Range bar */
+.range-wrap { margin: 4px 0; }
+.range-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--slate); margin-bottom: 4px; }
+.range-track {
+  height: 8px; background: var(--slate-pale);
+  border-radius: 4px; position: relative; overflow: visible;
+}
+.range-zone { position: absolute; height: 100%; border-radius: 4px; background: rgba(45,122,107,0.15); }
+.range-dot {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 2.5px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+.range-dot.good { background: var(--good); }
+.range-dot.warn { background: var(--warn); }
+.range-dot.bad { background: var(--bad); }
+
+/* Expand */
+.expand-panel { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border); }
+.ind-card.open .expand-panel { display: block; }
+.exp-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+.exp-label.mgmt { color: var(--rose); }
+.exp-label.med { color: var(--navy); }
+
+.mgmt-box {
+  background: linear-gradient(135deg,#FFF8F9,var(--rose-pale));
+  border: 1px solid var(--rose-light); border-radius: 10px;
+  padding: 10px 14px; font-size: 13px; line-height: 1.7; color: #6A2030;
+}
+.med-box {
+  background: var(--slate-pale); border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px 14px;
+  font-size: 12px; line-height: 1.7; color: var(--navy);
+}
+.tip-box {
+  border-radius: 10px; padding: 10px 14px;
+  font-size: 12px; line-height: 1.7; margin-top: 8px;
+}
+.tip-box.good { background: rgba(45,122,107,0.07); color: #1A4A30; border: 1px solid rgba(45,122,107,0.2); }
+.tip-box.warn { background: rgba(196,122,48,0.07); color: #6A3A00; border: 1px solid rgba(196,122,48,0.2); }
+.tip-box.bad { background: rgba(200,86,106,0.07); color: #7A1A28; border: 1px solid rgba(200,86,106,0.2); }
+.expand-toggle { font-size: 11px; color: var(--slate); margin-top: 8px; text-align: center; }
+
+/* ── OVERVIEW CARDS ── */
+.overview-card {
+  background: white; border-radius: 16px; border: 1px solid var(--border);
+  padding: 16px; margin-bottom: 10px;
+}
+.ov-title { font-size: 15px; font-weight: 900; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+.health-bars { display: flex; flex-direction: column; gap: 10px; }
+.hbar { display: flex; align-items: center; gap: 10px; }
+.hbar-label { font-size: 12px; font-weight: 700; width: 76px; flex-shrink: 0; }
+.hbar-track { flex: 1; height: 10px; background: var(--slate-pale); border-radius: 5px; overflow: hidden; }
+.hbar-fill { height: 100%; border-radius: 5px; transition: width 1s cubic-bezier(0.4,0,0.2,1); }
+.hbar-val { font-size: 12px; font-weight: 800; width: 40px; text-align: right; flex-shrink: 0; }
+
+/* ── SYMPTOM CHIPS ── */
+.chip-scroll { display: flex; gap: 7px; overflow-x: auto; padding-bottom: 10px; -webkit-overflow-scrolling: touch; }
+.chip-scroll::-webkit-scrollbar { display: none; }
+.chip {
+  padding: 7px 14px; border-radius: 20px; white-space: nowrap;
+  font-size: 12px; font-weight: 700; cursor: pointer; flex-shrink: 0;
+  border: 1.5px solid var(--border); background: white; color: var(--slate);
+  transition: all 0.2s; font-family: var(--font);
+}
+.chip.active { background: var(--rose); color: white; border-color: var(--rose); }
+
+.symptom-result {
+  background: white; border: 1.5px solid var(--rose-light);
+  border-radius: 14px; padding: 14px 16px; display: none; margin-bottom: 10px;
+}
+.symptom-result.visible { display: block; }
+.sr-title { font-size: 14px; font-weight: 800; color: var(--ink); margin-bottom: 8px; }
+.sr-text { font-size: 13px; color: var(--slate); line-height: 1.7; }
+.sr-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.sr-tag {
+  font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 8px;
+  background: var(--rose-pale); color: var(--rose);
+}
+
+/* ── METABOLISM FLOW ── */
+.flow-card {
+  background: white; border-radius: 16px; border: 1px solid var(--border);
+  padding: 16px; margin-bottom: 10px;
+}
+.flow-title { font-size: 14px; font-weight: 800; margin-bottom: 4px; }
+.flow-sub { font-size: 12px; color: var(--slate); margin-bottom: 14px; }
+.flow-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 8px; }
+.flow-scroll::-webkit-scrollbar { display: none; }
+.flow-row { display: flex; align-items: center; gap: 0; min-width: 360px; }
+.flow-node {
+  flex-shrink: 0; min-width: 70px;
+  background: var(--slate-pale); border: 1.5px solid var(--border);
+  border-radius: 10px; padding: 8px 10px; text-align: center;
+  cursor: pointer; transition: all 0.2s;
+}
+.flow-node:active, .flow-node.active {
+  background: var(--rose-pale); border-color: var(--rose-light);
+}
+.flow-node.bad-node { background: var(--rose-pale); border-color: var(--rose-light); }
+.fn-abbr { font-size: 13px; font-weight: 900; color: var(--ink); }
+.fn-name { font-size: 9px; color: var(--slate); margin-top: 2px; }
+.fn-val { font-size: 11px; font-weight: 800; margin-top: 3px; }
+.fn-val.ok { color: var(--good); }
+.fn-val.low { color: var(--bad); }
+.fn-val.high { color: var(--warn); }
+.flow-arr {
+  color: var(--slate-light); font-size: 16px; padding: 0 4px; flex-shrink: 0;
+  display: flex; flex-direction: column; align-items: center;
+}
+.flow-arr-label { font-size: 8px; color: var(--slate-light); text-align: center; max-width: 44px; }
+
+.flow-desc {
+  background: var(--rose-pale); border-radius: 10px;
+  padding: 12px 14px; margin-top: 12px;
+  font-size: 13px; color: #6A2030; line-height: 1.7; display: none;
+}
+.flow-desc.visible { display: block; }
+.flow-desc strong { font-weight: 800; color: var(--bad); }
+
+/* ── ACTION PLAN ── */
+.retest-card {
+  background: linear-gradient(135deg, var(--navy), #2D4050);
+  border-radius: 16px; padding: 18px; margin-bottom: 10px;
+  position: relative; overflow: hidden;
+}
+.retest-card::after {
+  content: '◌'; position: absolute; right: -15px; bottom: -20px;
+  font-size: 100px; color: rgba(200,86,106,0.1); font-weight: 300;
+}
+.retest-title { color: white; font-size: 16px; font-weight: 900; margin-bottom: 6px; }
+.retest-desc { color: rgba(255,255,255,0.6); font-size: 12px; line-height: 1.6; margin-bottom: 14px; }
+.retest-countdown { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.retest-circle {
+  width: 72px; height: 72px; border-radius: 50%;
+  border: 3px solid rgba(200,86,106,0.5);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.retest-days { font-size: 28px; font-weight: 900; color: white; line-height: 1; }
+.retest-dlabel { font-size: 9px; color: var(--rose-light); letter-spacing: 0.06em; }
+.retest-info { color: rgba(255,255,255,0.7); font-size: 12px; line-height: 1.7; }
+.retest-btn {
+  width: 100%; padding: 12px; border-radius: 12px;
+  background: var(--rose); color: white; font-size: 14px; font-weight: 800;
+  border: none; cursor: pointer; font-family: var(--font);
+}
+.retest-btn:active { background: var(--rose-mid); }
+
+.action-card {
+  background: white; border-radius: 14px; border: 1px solid var(--border);
+  padding: 14px 16px; margin-bottom: 8px;
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.action-prio { font-size: 22px; flex-shrink: 0; }
+.action-body { flex: 1; }
+.action-title { font-size: 13px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+.action-desc { font-size: 12px; color: var(--slate); line-height: 1.6; }
+.action-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.action-tag {
+  font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 8px;
+}
+.action-tag.rose { background: var(--rose-pale); color: var(--rose); }
+.action-tag.gold { background: var(--gold-pale); color: var(--gold); }
+.action-tag.teal { background: var(--teal-pale); color: var(--teal); }
+
+/* ── RECOMMEND GRID ── */
+.rec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.rec-card {
+  background: white; border: 1.5px dashed var(--border);
+  border-radius: 12px; padding: 14px 12px; text-align: center; cursor: pointer;
+}
+.rec-card:active { border-color: var(--rose); background: var(--rose-pale); }
+.rec-icon { font-size: 24px; margin-bottom: 6px; }
+.rec-name { font-size: 12px; font-weight: 800; color: var(--ink); }
+.rec-sub { font-size: 10px; color: var(--slate); margin-top: 4px; line-height: 1.5; }
+
+/* footer */
+.report-footer {
+  background: var(--slate-pale); border-radius: 12px;
+  padding: 12px 14px; font-size: 11px; color: var(--slate);
+  line-height: 1.8; text-align: center; margin-bottom: 6px;
+}
+</style>
+</head>
+<body>
+
+<!-- MODE BAR -->
+<div class="mode-bar">
+  <div class="mode-brand">
+    <div class="mode-mark">泊</div>
+    <div>
+      <div class="mode-name">泊迈生物医学检测</div>
+      <div class="mode-sub">女性荷尔蒙健康评估报告</div>
+    </div>
+  </div>
+  <div class="mode-toggle">
+    <button class="mode-btn active" onclick="setMode('mgmt')">💆 健康管理</button>
+    <button class="mode-btn" onclick="setMode('med')">🩺 医疗专业</button>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="patient-row">
+    <div class="patient-avatar">👩</div>
+    <div class="patient-info">
+      <div class="patient-name">金慧剑</div>
+      <div class="patient-meta">27岁 · 女性 · 个人送检 · 编号 T20180906002</div>
+    </div>
+    <div class="report-info">
+      <div class="r-label">采样</div>
+      <div class="r-date">2018.08.24</div>
+      <div class="r-label" style="margin-top:5px">报告</div>
+      <div class="r-date">2018.09.06</div>
+    </div>
+  </div>
+
+  <div class="score-row">
+    <div class="score-pill ovary" onclick="switchTab('ovary')">
+      <div class="score-icon">🌸</div>
+      <div class="score-name">卵巢功能</div>
+      <div class="score-val">72</div>
+      <div class="score-grade">关注代谢</div>
+    </div>
+    <div class="score-pill estrogen" onclick="switchTab('estrogen')">
+      <div class="score-icon">⚗️</div>
+      <div class="score-name">雌激素代谢</div>
+      <div class="score-val">58</div>
+      <div class="score-grade">需要干预</div>
+    </div>
+    <div class="score-pill androgen" onclick="switchTab('androgen')">
+      <div class="score-icon">⚡</div>
+      <div class="score-name">雄激素水平</div>
+      <div class="score-val">83</div>
+      <div class="score-grade">高位偏高</div>
+    </div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tab-bar">
+  <button class="tab-item active t-rose" onclick="switchTab('overview')">
+    <span class="tab-icon">🌺</span><span class="tab-label">总览</span>
+  </button>
+  <button class="tab-item t-rose" onclick="switchTab('ovary')">
+    <span class="tab-icon">🌸</span><span class="tab-label">卵巢</span>
+  </button>
+  <button class="tab-item t-gold" onclick="switchTab('estrogen')">
+    <span class="tab-icon">⚗️</span><span class="tab-label">雌激素</span>
+  </button>
+  <button class="tab-item t-teal" onclick="switchTab('androgen')">
+    <span class="tab-icon">⚡</span><span class="tab-label">雄激素</span>
+  </button>
+  <button class="tab-item t-sky" onclick="switchTab('symptoms')">
+    <span class="tab-icon">🩺</span><span class="tab-label">症状</span>
+  </button>
+  <button class="tab-item t-navy" onclick="switchTab('plan')">
+    <span class="tab-icon">📋</span><span class="tab-label">计划</span>
+  </button>
+</div>
+
+<!-- SCROLL -->
+<div class="scroll-area" id="scroll-area">
+
+<!-- ════ OVERVIEW ════ -->
+<div class="view active" id="view-overview">
+
+  <!-- Management mode -->
+  <div class="mgmt-panel">
+    <div class="friendly-msg rose">
+      <div class="f-emoji">💡</div>
+      <div class="f-text rose-c">
+        <strong>慧剑，这次报告有2个地方需要重点关注：</strong><br>
+        雌三醇（E3）偏低，说明雌激素代谢排出通道有些不顺畅；活性睾固酮偏高，可能影响皮肤和激素平衡。其他指标整体良好，卵巢功能健康！
+      </div>
+    </div>
+  </div>
+
+  <!-- Medical mode -->
+  <div class="med-panel">
+    <div class="med-box" style="margin-bottom:10px;border-radius:14px;padding:14px 16px">
+      <strong>临床综合摘要：</strong>LH 11.9 / FSH 4.23 mIU/mL 正常，卵巢储备良好。E2 160.5 pg/mL 处于滤泡期上限，E3 &lt;5 pg/mL 明显低于参考值（17–66），提示雌激素肝脏代谢通路受阻。DHEA-S 1970 ng/mL 肾上腺储备良好。Free Testosterone 6.52 pg/mL（参考 0.89–2.0），明显偏高，需排查 PCOs。
+    </div>
+  </div>
+
+  <!-- Health score -->
+  <div class="overview-card">
+    <div class="ov-title">📊 健康维度评分</div>
+    <div class="health-bars">
+      <div class="hbar">
+        <div class="hbar-label">🌸 卵巢功能</div>
+        <div class="hbar-track"><div class="hbar-fill" style="width:0%;background:var(--rose)" data-w="72%"></div></div>
+        <div class="hbar-val" style="color:var(--rose)">72分</div>
+      </div>
+      <div class="hbar">
+        <div class="hbar-label">⚗️ 雌激素代谢</div>
+        <div class="hbar-track"><div class="hbar-fill" style="width:0%;background:var(--warn)" data-w="58%"></div></div>
+        <div class="hbar-val" style="color:var(--warn)">58分</div>
+      </div>
+      <div class="hbar">
+        <div class="hbar-label">⚡ 雄激素</div>
+        <div class="hbar-track"><div class="hbar-fill" style="width:0%;background:var(--teal)" data-w="83%"></div></div>
+        <div class="hbar-val" style="color:var(--teal)">83分</div>
+      </div>
+      <div class="hbar">
+        <div class="hbar-label">🌿 肾上腺</div>
+        <div class="hbar-track"><div class="hbar-fill" style="width:0%;background:var(--sky)" data-w="88%"></div></div>
+        <div class="hbar-val" style="color:var(--sky)">88分</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Body impact map (management) -->
+  <div class="mgmt-panel">
+    <div class="overview-card" style="padding-bottom:14px">
+      <div class="ov-title">📍 这些指标影响你身体的哪里</div>
+      <div style="background:var(--slate-pale);border-radius:12px;padding:16px;text-align:center;font-size:40px;margin-bottom:12px">👩‍🦰</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--rose-pale);border-radius:10px">
+          <span style="font-size:18px">⚗️</span>
+          <div style="font-size:12px;line-height:1.6;color:#6A2030"><strong>肝脏代谢通道</strong> — E3 偏低说明雌激素经肝脏「解毒排出」的效率下降，长期可能增加雌激素相关健康风险</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--gold-pale);border-radius:10px">
+          <span style="font-size:18px">🌸</span>
+          <div style="font-size:12px;line-height:1.6;color:#6A3A00"><strong>皮肤和毛发</strong> — 活性睾固酮偏高容易导致皮脂腺分泌过旺，引起痤疮或油性肌肤</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--teal-pale);border-radius:10px">
+          <span style="font-size:18px">✅</span>
+          <div style="font-size:12px;line-height:1.6;color:#1A4A40"><strong>卵巢和脑垂体</strong> — LH、FSH、E2 均正常，排卵功能健全，卵巢储备良好，这很棒！</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ OVARY ════ -->
+<div class="view" id="view-ovary">
+  <div class="mgmt-panel">
+    <div class="friendly-msg rose">
+      <div class="f-emoji">🌸</div>
+      <div class="f-text rose-c"><strong>好消息！卵巢功能整体健康。</strong><br>黄体刺激素和滤泡刺激素都在正常范围，说明大脑和卵巢的「对话」很顺畅，排卵功能良好。</div>
+    </div>
+  </div>
+  <div class="med-panel">
+    <div class="sec-label">脑垂体荷尔蒙 · Pituitary Hormones</div>
+  </div>
+
+  <div class="ind-card good" onclick="toggleCard(this)">
+    <div class="ind-top">
+      <div><div class="ind-name">黄体刺激素</div><div class="ind-name-en">LH · Luteinizing Hormone</div></div>
+      <span class="ind-tag good">✓ 正常</span>
+    </div>
+    <div class="ind-val-row"><div class="ind-val good">11.9</div><div class="ind-unit">mIU/mL</div></div>
+    <div class="range-wrap">
+      <div class="range-labels"><span>滤泡期 1.0</span><span>参考 1.0–18.0</span><span>18</span></div>
+      <div class="range-track"><div class="range-zone" style="left:0%;width:100%"></div><div class="range-dot good" style="left:60%"></div></div>
+    </div>
+    <div class="expand-panel">
+      <div class="mgmt-panel"><div class="exp-label mgmt">💆 健康管理解读</div>
+        <div class="mgmt-box">LH 是大脑垂体发出的「排卵信号」，控制排卵节律。11.9 mIU/mL 完全正常，说明你的月经周期调控中枢运作很好！</div>
+        <div class="tip-box good">✅ LH 正常代表脑垂体-卵巢轴调节完整，排卵功能未受干扰。</div>
+      </div>
+      <div class="med-panel"><div class="exp-label med">🩺 临床解读</div>
+        <div class="med-box">LH 11.9 mIU/mL 处于滤泡期正常范围（1.0–18.0），提示下丘脑-垂体-卵巢轴调节功能正常，GnRH 脉冲分泌及 LH 反应均正常，无高 LH 血症（PCOs 常见表现），无低 LH 血症（下丘脑性闭经风险）。</div>
+      </div>
+    </div>
+    <div class="expand-toggle">点击展开详解 ▾</div>
+  </div>
+
+  <div class="ind-card good" onclick="toggleCard(this)">
+    <div class="ind-top">
+      <div><div class="ind-name">滤泡刺激素</div><div class="ind-name-en">FSH · Follicle-Stimulating Hormone</div></div>
+      <span class="ind-tag good">✓ 正常</span>
+    </div>
+    <div class="ind-val-row"><div class="ind-val good">4.23</div><div class="ind-unit">mIU/mL</div></div>
+    <div class="range-wrap">
+      <div class="range-labels"><span>4.0</span><span>参考 4.0–13.0</span><span>13.0</span></div>
+      <div class="range-track"><div class="range-zone" style="left:0%;width:100%"></div><div class="range-dot good" style="left:2%"></div></div>
+    </div>
+    <div class="expand-panel">
+      <div class="mgmt-panel"><div class="exp-label mgmt">💆 健康管理解读</div>
+        <div class="mgmt-box">FSH 负责刺激卵巢中卵泡的成熟发育。4.23 mIU/mL 在正常范围内，且处于正常低值，这对 27 岁的你来说是个好消息——卵巢储备充足，不存在卵巢早衰的迹象！</div>
+      </div>
+      <div class="med-panel"><div class="exp-label med">🩺 临床解读</div>
+        <div class="med-box">FSH 4.23 mIU/mL，滤泡期低值，卵巢储备功能（DOR）评估阴性。FSH &lt;10 mIU/mL 为正常卵巢储备的良好指标，排除卵巢早衰（POI：FSH&gt;25）及卵巢抵抗综合征。</div>
+      </div>
+    </div>
+    <div class="expand-toggle">点击展开详解 ▾</div>
+  </div>
+
+  <div class="sec-label">卵巢荷尔蒙 · Ovarian Hormones</div>
+
+  <div class="ind-card good" onclick="toggleCard(this)">
+    <div class="ind-top">
+      <div><div class="ind-name">雌二醇</div><div class="ind-name-en">E2 · Estradiol</div></div>
+      <span class="ind-tag good">✓ 正常</span>
+    </div>
+    <div class="ind-val-row"><div class="ind-val good">160.5</div><div class="ind-unit">pg/mL</div></div>
+    <div class="range-wrap">
+      <div class="range-labels"><span>35</span><span>滤泡期 35–125</span><span>125</span></div>
+      <div class="range-track"><div class="range-zone" style="left:0%;width:100%"></div><div class="range-dot good" style="left:72%"></div></div>
+    </div>
+    <div class="expand-panel">
+      <div class="mgmt-panel"><div class="exp-label mgmt">💆 健康管理解读</div>
+        <div class="mgmt-box">E2 是活性最强的雌激素，维持骨骼健康、情绪稳定、皮肤弹性、心血管功能。160.5 pg/mL 处于健康活跃区间，说明卵巢雌激素分泌旺盛，这是年轻女性状态良好的表现！</div>
+        <div class="tip-box good">✅ E2 水平理想，有助于维持皮肤、骨骼、情绪的良好状态。</div>
+      </div>
+      <div class="med-panel"><div class="exp-label med">🩺 临床解读</div>
+        <div class="med-box">E2 160.5 pg/mL，处于滤泡期上限，提示优势卵泡发育良好。E2 高水平可能提示采样时间接近滤泡晚期（E2 峰值前）。需结合采样月经周期天数判读，若为早滤泡期则值偏高，可考虑 LH 峰前抑制机制评估。</div>
+      </div>
+    </div>
+    <div class="expand-toggle">点击展开详解 ▾</div>
+  </div>
+
+  <div class="ind-card good" onclick="toggleCard(this)">
+    <div class="ind-top">
+      <div><div class="ind-name">雌酮</div><div class="ind-name-en">E1 · Estrone</div></div>
+      <span class="ind-tag good">✓ 正常</span>
+    </div>
+    <div class="ind-val-row"><div class="ind-val good">95.9</div><div class="ind-unit">pg/mL</div></div>
+    <div class="range-wrap">
+      <div class="range-labels"><span>35</span><span>滤泡期 35–135</span><span>135</span></div>
+      <div class="range-track"><div class="range-zone" style="left:0%;width:100%"></div><div class="range-dot good" style="left:61%"></div></div>
+    </div>
+    <div class="expand-panel">
+      <div class="mgmt-panel"><div class="exp-label mgmt">💆 健康管理解读</div>
+        <div class="mgmt-box">E1（雌酮）是三种雌激素之一，与 E2 共同维持激素平衡。95.9 pg/mL 处于正常中间值，说明卵巢雌激素合成功能运作良好。</div>
+      </div>
+      <div class="med-panel"><div class="exp-label med">🩺 临床解读</div>
+        <div class="med-box">E1 95.9 pg/mL 正常，E1/E2 比值约 0.6，符合生育年龄女性滤泡期正常比例（E2 主导）。停经后 E1 将成为主要雌激素来源，目前无需特别关注。</div>
+      </div>
+    </div>
+    <div class="expand-toggle">点击展开详解 ▾</div>
+  </div>
+
+  <div class="ind-card good" onclick="toggleCard(this)">
+    <div class="ind-top">
+      <div><div class="ind-name">黄体酮</div><div class="ind-name-en">Progesterone P4</div></div>
+      <span class="ind-tag warn">⚠ 需确认</span>
+    </div>
+    <div class="ind-val-row"><div class="ind-val warn">11.4</div><div class="ind-unit">ng/mL</div></div>
+    <div class="range-wrap">
+      <div class="range-labels"><span>0.2</span><span>滤泡期参考 0.2–1.0</span><span>1.0</span></div>
+      <div class="range-track"><div class="range-zone" style="left:2%;width:9%"></div><div class="range-dot warn" style="left:96%"></div></div>
+    </div>
+    <div class="expand-panel">
+      <div class="mgmt-panel"><div class="exp-label mgmt">💆 健康管理解读</div>
+        <div class="mgmt-box">黄体酮在滤泡期通常很低，11.4 ng/mL 远高于滤泡期参考值。<strong>但重要提示：</strong>这完全可能是正常的！如果你采血时处于排卵后的黄体期（月经第15–28天），这个数值属于完全正常的黄体期水平（2–20 ng/mL）。<br><br>💡 请回想采血当天是月经第几天，告知医生确认。</div>
+      </div>
+      <div class="med-panel"><div class="exp-label med">🩺 临床解读</div>
+        <div class="med-box">P4 11.4 ng/mL，若处于黄体期（D15–D28）：属正常黄体期峰值，无需处理。若处于滤泡期（D2–D14）：明显高于参考上限（1.0 ng/mL），需排查黄体囊肿（卵泡黄素化未破裂综合征 LUFS）、17α-羟化酶缺乏等。建议结合采样时月经周期天数重新判读，必要时复查。</div>
+        <div class="tip-box warn">⚠️ 关键：确认采样时月经周期的准确天数，是滤泡期异常还是黄体期正常两种截然不同的临床意义。</div>
+      </div>
+    </div>
+    <div class="expand-toggle">点击展开详解 ▾</div>
+  </div>
+</div>
+
+<!-- ════ ESTROGEN METABOLISM ════ -->
+<div class="view" id="view-estrogen">
+
+  <div class="mgmt-panel">
+    <div class="friendly-msg gold">
+      <div class="f-emoji">⚗️</div>
+      <div class="f-text gold-c"><strong>这是本次报告最需要关注的地方。</strong><br>雌激素代谢就像一条排水管道，你的 E3 偏低说明「排出通道」不够顺畅，雌激素没有被充分分解排出。好在是早发现，可以通过饮食和营养补充来改善！</div>
+    </div>
+  </div>
+
+  <!-- Flow diagram -->
+  <div class="flow-card">
+    <div class="flow-title">雌激素代谢路径图</div>
+    <div class="flow-sub mgmt-panel">点击路径节点，了解每个环节</div>
+    <div class="flow-sub med-panel">固醇类激素合成路径 · LC/MS/MS · 点击节点查看详情</div>
+    <div class="flow-scroll">
+      <div class="flow-row">
+        <div class="flow-node" onclick="showFlowNode('dheas')">
+          <div class="fn-abbr">DHEA-S</div><div class="fn-name">肾上腺前体</div>
+          <div class="fn-val ok">1970</div>
+        </div>
+        <div class="flow-arr">→<div class="flow-arr-label">SULT2A1</div></div>
+        <div class="flow-node" onclick="showFlowNode('adione')">
+          <div class="fn-abbr">A-dione</div><div class="fn-name">雄烯二酮</div>
+          <div class="fn-val ok">1.40</div>
+        </div>
+        <div class="flow-arr">→<div class="flow-arr-label">Aromatase</div></div>
+        <div class="flow-node" onclick="showFlowNode('e1')">
+          <div class="fn-abbr">E1</div><div class="fn-name">雌酮</div>
+          <div class="fn-val ok">95.9</div>
+        </div>
+        <div class="flow-arr">⇄<div class="flow-arr-label">17βHSD</div></div>
+        <div class="flow-node" onclick="showFlowNode('e2')">
+          <div class="fn-abbr">E2</div><div class="fn-name">雌二醇</div>
+          <div class="fn-val ok">160.5</div>
+        </div>
+        <div class="flow-arr">→<div class="flow-arr-label">肝脏代谢</div></div>
+        <div class="flow-node bad-node" onclick="showFlowNode('e3')">
+          <div class="fn-abbr">E3 ⚠️</div><div class="fn-name">雌三醇</div>
+          <div class="fn-val low">&lt;5</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="flow-dheas" class="flow-desc">
+      <strong>DHEA-S 1970 ng/mL · ✓ 正常</strong><br>
+      <span class="mgmt-panel">「激素之母」水平理想！DHEA-S 是所有性激素的原材料，你的肾上腺储备充足，这对长期激素健康和抗衰老都很有利。</span>
+      <span class="med-panel">DHEA-S 1970 ng/mL（参考 901–3043），处于正常中值，肾上腺皮质雄激素分泌储备充足，SULT2A1 硫酸化通路正常。</span>
+    </div>
+    <div id="flow-adione" class="flow-desc">
+      <strong>A-dione 1.40 ng/mL · ✓ 正常</strong><br>
+      <span class="mgmt-panel">雄烯二酮是雄激素转化为雌激素的「中转站」，你的数值正常，说明这个中间环节运作顺畅。</span>
+      <span class="med-panel">A-dione 1.40 ng/mL（参考 0.10–2.99），正常，芳香转化酶（Aromatase/CYP19）催化功能正常，雄烯二酮→雌酮转化效率正常。</span>
+    </div>
+    <div id="flow-e1" class="flow-desc">
+      <strong>E1（雌酮）95.9 pg/mL · ✓ 正常</strong><br>
+      <span class="mgmt-panel">雌酮处于正常中间值，与雌二醇（E2）共同维持良好的雌激素环境。</span>
+      <span class="med-panel">E1 95.9 pg/mL（参考 35.0–135），E1/E2 比值约 0.60，符合滤泡期正常比例，E2 主导地位正常，E1 过高（&gt;E2）在绝经后或芳香化酶过度活跃时出现，目前无此迹象。</span>
+    </div>
+    <div id="flow-e2" class="flow-desc">
+      <strong>E2（雌二醇）160.5 pg/mL · ✓ 正常</strong><br>
+      <span class="mgmt-panel">E2 是最强效的雌激素，负责至少 400 种生理功能！你的 E2 水平优秀，是皮肤、骨骼、情绪健康的重要基础。</span>
+      <span class="med-panel">E2 160.5 pg/mL，处于滤泡期高值区间，卵巢雌激素分泌功能良好。17βHSD 双向转化酶活性正常（E1⇄E2 互转），E2→E3 的代谢路径在肝脏进行（CYP3A4 羟化），当前 E3 偏低提示此步骤效率下降。</span>
+    </div>
+    <div id="flow-e3" class="flow-desc visible">
+      <strong>E3（雌三醇）&lt;5 pg/mL · ⚠️ 偏低 — 需要关注</strong><br>
+      <span class="mgmt-panel">E3 是雌激素经过肝脏「分解排毒」后的最终产物。E3 偏低通常意味着：①肝脏代谢效率不足；②肠道菌群异常导致雌激素「循环再吸收」；③缺乏支持代谢的 B 族维生素（B6、叶酸）。<br><br>💡 建议：多吃十字花科蔬菜（西兰花/花椰菜，含天然 DIM），补充 B6 和叶酸，配合有机酸检测评估肠道状态。</span>
+      <span class="med-panel">E3 &lt;5 pg/mL（参考 17.0–66.0），明显低于参考下限。非孕期 E3 偏低提示：①肝脏 Phase I/Phase II 雌激素代谢通路受阻（CYP3A4、COMT、UGT 酶系活性不足）；②肠道 β-葡萄糖苷酶过度活跃导致雌激素肠肝再循环增加；③甲基化辅因子（B12、叶酸、SAM）不足。建议：靛基质-3-原醇（I3C）/ DIM 补充，活性叶酸（5-MTHF）+ 甲基 B12，有机酸检测评估肠道代谢状态，Calcium-D-Glucarate 支持葡萄糖醛酸化排毒。</span>
+    </div>
+  </div>
+
+  <div class="ind-card bad" onclick="toggleCard(this)">
+    <div class="ind-top">
+      <div><div class="ind-name">雌三醇</div><div class="ind-name-en">E3 · Estriol</div></div>
+      <span class="ind-tag bad">↓ 偏低</span>
+    </div>
+    <div class="ind-val-row"><div class="ind-val bad">&lt; 5</div><div class="ind-unit">pg/mL</div></div>
+    <div class="range-wrap">
+      <div class="range-labels"><span>17.0</span><span>参考 17.0–66.0</span><span>66.0</span></div>
+      <div class="range-track"><div class="range-zone" style="left:0%;width:100%"></div><div class="range-dot bad" style="left:0%"></div></div>
+    </div>
+    <div class="expand-panel">
+      <div class="mgmt-panel"><div class="exp-label mgmt">💆 健康管理解读</div>
+        <div class="mgmt-box">E3 是雌激素完成「工作」后通过肝脏排出的形式，可以理解为雌激素的「废水处理」。E3 太低说明废水没有被好好处理，雌激素在体内积累，长期下去可能增加乳腺、子宫方面的风险。<br><br>
+        💡 <strong>行动建议：</strong>每周3次以上西兰花/花椰菜，减少酒精（酒精干扰肝脏代谢），可在医生指导下补充 DIM 和活性叶酸。</div>
+        <div class="tip-box bad">⚠️ 这是本次报告最需要积极干预的指标，建议3个月后复测验证改善效果。</div>
+      </div>
+      <div class="med-panel"><div class="exp-label med">🩺 临床解读</div>
+        <div class="med-box">E3 &lt;5 pg/mL（参考 17.0–66.0），明显偏低。需考虑：① COMT（儿茶酚-O-甲基转移酶）活性不足，2-OHE/4-OHE 堆积，增加 DNA 氧化损伤风险；② UGT（UDP-葡萄糖醛酸转移酶）活性不足，葡萄糖醛酸化排毒受阻；③ 肠道菌群 β-葡萄糖苷酶过度活跃，estrogen glucuronide 水解，雌激素经肠肝循环再吸收。建议配合有机酸检测（评估肠道菌群状态及叶酸代谢标志物）。</div>
+        <div class="tip-box bad">⚠️ 2-OHE：16α-OHE 比值评估有助于进一步量化乳腺癌雌激素代谢风险。</div>
+      </div>
+    </div>
+    <div class="expand-toggle">点击展开详解 ▾</div>
+  </div>
+</div>
+
+<!-- ════ ANDROGENS ════ -->
+<div class="view" id="view-androgen">
+
+  <div class="mgmt-panel">
+    <div class="friendly-msg gold">
+      <div class="f-emoji">⚡</div>
+      <div class="f-text gold-c"><strong>活性睾固酮偏高，需要关注。</strong><br>女性也有少量雄激素，这是正常的。但慧剑的活性睾固酮超出正常范围较多，可能与痤疮、多毛或月经不规律有关联，建议进一步评估。</div>
+    </div>
+  </div>
+
+  <div class="ind-card good" onclick="toggleCard(this)">
+    <div class="ind-top">
+      <div><div class="ind-name">脱氢异雄固酮硫酸盐</div><div class="ind-name-en">DHEA-S</div></div>
+      <span class="ind-tag good">✓ 正常</span>
+    </div>
+    <div class="ind-val-row"><div class="ind-val good">1970</div><div class="ind-unit">ng/mL</div></div>
+    <div class="range-wrap">
+      <div class="range-labels"><span>901</span><span>参考 901–3043</span><span>3043</span></div>
+      <div class="range-track"><div class="range-zone" style="left:0%;width:100%"></div><div class="range-dot good" style="left:50%"></div></div>
+    </div>
+    <div class="expand-panel">
+      <div class="mgmt-panel"><div class="exp-label mgmt">💆 健康管理解读</div>
+        <div class="mgmt-box">DHEA-S 被称为「性激素之母」，是所有性激素的原材料。1970 ng/mL 处于理想中间值，说明肾上腺功能充沛，抗衰老储备良好！30 岁以后每年下降约 2%，现在的水平非常理想。</div>
+      </div>
+      <div class="med-panel"><div class="exp-label med">🩺 临床解读</div>
+        <div class="med-box">DHEA-S 1970 ng/mL（参考 901–3043），处于正常中值。肾上腺皮质雄激素合成储备充足，排除肾上腺雄激素分泌过多（DHEA-S &gt;3500 见于 CAH、肾上腺肿瘤）及肾上腺功能减退。</div>
+      </div>
+    </div>
+    <div class="expand-toggle">点击展开详解 ▾</div>
+  </div>
+
+  <div class="ind-card bad" onclick="toggleCard(this)">
+    <div class="ind-top">
+      <div><div class="ind-name">活性睾固酮</div><div class="ind-name-en">Free Testosterone</div></div>
+      <span class="ind-tag bad">↑ 偏高</span>
+    </div>
+    <div class="ind-val-row"><div class="ind-val bad">6.52</div><div class="ind-unit">pg/mL</div></div>
+    <div class="range-wrap">
+      <div class="range-labels"><span>0.89</span><span>参考 0.89–2.0</span><span>2.0</span></div>
+      <div class="range-track"><div class="range-zone" style="left:0%;width:35%"></div><div class="range-dot bad" style="left:98%"></div></div>
+    </div>
+    <div class="expand-panel">
+      <div class="mgmt-panel"><div class="exp-label mgmt">💆 健康管理解读</div>
+        <div class="mgmt-box">活性睾固酮 6.52 pg/mL，超出正常上限 3 倍多。雄激素偏高在女性常见于多囊卵巢综合征（PCOs）。你可能经历过：痤疮、皮肤偏油、部分体毛增多、月经不规律，或者体重管理比较困难。<br><br>
+        💡 <strong>建议下一步：</strong>做一次盆腔超声检查，同时查空腹血糖和胰岛素，看看是否有胰岛素抵抗的情况。</div>
+        <div class="tip-box bad">⚠️ 这是需要与妇科或内分泌科医生讨论的指标，不要忽视。</div>
+      </div>
+      <div class="med-panel"><div class="exp-label med">🩺 临床解读</div>
+        <div class="med-box">Free T 6.52 pg/mL（参考 0.89–2.0），超出参考上限 3.26 倍。结合 DHEA-S 正常，过高的 Free T 可能来源于：①卵巢来源雄激素过度分泌（PCOs 最常见）；②SHBG 85.3 nmol/L 正常，排除 SHBG 降低导致游离雄激素升高。<br><br>建议：盆腔超声（卵泡计数/多囊形态），空腹胰岛素 + HOMA-IR（胰岛素抵抗评估），月经周期规律性记录，必要时 ACTH 兴奋试验（排查 CAH）。</div>
+        <div class="tip-box bad">⚠️ Free T &gt;2 倍正常上限且 LH/FSH 比值 &gt;2 时，PCOs 临床诊断概率 &gt;70%，建议按 Rotterdam 标准完整评估。</div>
+      </div>
+    </div>
+    <div class="expand-toggle">点击展开详解 ▾</div>
+  </div>
+
+  <div class="ind-card good" onclick="toggleCard(this)">
+    <div class="ind-top">
+      <div><div class="ind-name">性荷尔蒙结合球蛋白</div><div class="ind-name-en">SHBG</div></div>
+      <span class="ind-tag good">✓ 正常</span>
+    </div>
+    <div class="ind-val-row"><div class="ind-val good">85.3</div><div class="ind-unit">nmol/L</div></div>
+    <div class="range-wrap">
+      <div class="range-labels"><span>26</span><span>参考 26–118</span><span>118</span></div>
+      <div class="range-track"><div class="range-zone" style="left:0%;width:100%"></div><div class="range-dot good" style="left:64%"></div></div>
+    </div>
+    <div class="expand-panel">
+      <div class="mgmt-panel"><div class="exp-label mgmt">💆 健康管理解读</div>
+        <div class="mgmt-box">SHBG 是血液中运输激素的「载体蛋白」，它正常说明激素的运输系统没问题。SHBG 偏低才会让更多游离雄激素「自由活动」，你的 SHBG 在正常范围，这是好事。</div>
+      </div>
+      <div class="med-panel"><div class="exp-label med">🩺 临床解读</div>
+        <div class="med-box">SHBG 85.3 nmol/L（参考 26.0–118），正常范围内，排除胰岛素抵抗或高雄激素血症导致 SHBG 降低的情况。SHBG 正常但 Free T 仍显著偏高，提示卵巢来源雄激素产生过多（而非 SHBG 降低导致的游离激素增多），进一步支持卵巢性雄激素过多的诊断方向。</div>
+      </div>
+    </div>
+    <div class="expand-toggle">点击展开详解 ▾</div>
+  </div>
+</div>
+
+<!-- ════ SYMPTOMS ════ -->
+<div class="view" id="view-symptoms">
+  <div class="sec-label">选择你正在经历的症状</div>
+  <div class="chip-scroll">
+    <div class="chip" onclick="selectSymptom(this,'acne')">😤 痤疮</div>
+    <div class="chip" onclick="selectSymptom(this,'fatigue')">😴 疲劳</div>
+    <div class="chip" onclick="selectSymptom(this,'mood')">😔 情绪波动</div>
+    <div class="chip" onclick="selectSymptom(this,'period')">📅 月经不规律</div>
+    <div class="chip" onclick="selectSymptom(this,'hair')">💇‍♀️ 多毛/脱发</div>
+    <div class="chip" onclick="selectSymptom(this,'weight')">⚖️ 体重增加</div>
+    <div class="chip" onclick="selectSymptom(this,'bloat')">🫧 腹胀水肿</div>
+    <div class="chip" onclick="selectSymptom(this,'sleep')">🌙 睡眠问题</div>
+    <div class="chip" onclick="selectSymptom(this,'libido')">💔 性欲降低</div>
+  </div>
+
+  <div class="symptom-result" id="symptom-result">
+    <div class="sr-title" id="sr-title">症状关联分析</div>
+    <div class="sr-text" id="sr-text"></div>
+    <div class="sr-tags" id="sr-tags"></div>
+  </div>
+
+  <!-- Med mode: clinical symptom table -->
+  <div class="med-panel">
+    <div class="sec-label">症状-指标对照表</div>
+    <div class="med-box" style="border-radius:14px;padding:0;overflow:hidden">
+      <div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;gap:8px">
+        <span style="width:40%;font-size:11px;font-weight:800;color:var(--slate)">症状</span>
+        <span style="width:35%;font-size:11px;font-weight:800;color:var(--slate)">关联指标</span>
+        <span style="width:25%;font-size:11px;font-weight:800;color:var(--slate)">优先级</span>
+      </div>
+      <div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;gap:8px;font-size:12px">
+        <span style="width:40%">痤疮/皮肤油</span><span style="width:35%;color:var(--bad)">Free T ↑</span><span style="width:25%"><span class="ind-tag bad" style="font-size:9px">高</span></span>
+      </div>
+      <div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;gap:8px;font-size:12px">
+        <span style="width:40%">月经不规律</span><span style="width:35%;color:var(--bad)">Free T ↑, LH正常</span><span style="width:25%"><span class="ind-tag bad" style="font-size:9px">高</span></span>
+      </div>
+      <div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;gap:8px;font-size:12px">
+        <span style="width:40%">乳房胀痛</span><span style="width:35%;color:var(--warn)">E3 ↓, E2正常偏高</span><span style="width:25%"><span class="ind-tag warn" style="font-size:9px">中</span></span>
+      </div>
+      <div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;gap:8px;font-size:12px">
+        <span style="width:40%">情绪波动</span><span style="width:35%;color:var(--warn)">E3 ↓, P4待确认</span><span style="width:25%"><span class="ind-tag warn" style="font-size:9px">中</span></span>
+      </div>
+      <div style="padding:10px 14px;display:flex;gap:8px;font-size:12px">
+        <span style="width:40%">体重增加</span><span style="width:35%;color:var(--warn)">Free T ↑ 胰岛素抵抗风险</span><span style="width:25%"><span class="ind-tag warn" style="font-size:9px">中</span></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ PLAN ════ -->
+<div class="view" id="view-plan">
+
+  <div class="retest-card">
+    <div class="retest-title">📅 建议 3 个月后复测</div>
+    <div class="retest-countdown">
+      <div class="retest-circle">
+        <div class="retest-days">90</div>
+        <div class="retest-dlabel">天后复测</div>
+      </div>
+      <div class="retest-info">E3 偏低 + Free T 偏高，建议在<strong style="color:var(--rose-light)">营养干预和生活调整后 90 天</strong>，重测验证改善效果。数据对比是评估干预是否有效的唯一客观依据。</div>
+    </div>
+    <button class="retest-btn">📅 预约复测提醒</button>
+  </div>
+
+  <div class="sec-label">优先行动计划</div>
+
+  <div class="action-card">
+    <div class="action-prio">🔴</div>
+    <div class="action-body">
+      <div class="action-title">立即处理：雌激素代谢排出受阻（E3 偏低）</div>
+      <div class="action-desc">
+        <div class="mgmt-panel">每周3次以上西兰花/花椰菜（含天然 DIM），补充维生素 B6（50mg/天）、活性叶酸，减少酒精，可在医生指导下补充 DIM 补充剂。</div>
+        <div class="med-panel">DIM/I3C 补充支持 Phase I 代谢，L-5-MTHF + 甲基 B12 支持 COMT 甲基化，Calcium-D-Glucarate 抑制 β-葡萄糖苷酶，益生菌（乳酸菌）改善肠道菌群，减少雌激素肠肝再循环。建议配合有机酸检测精准评估叶酸代谢和肠道状态。</div>
+      </div>
+      <div class="action-tags"><span class="action-tag gold">⚗️ 雌激素代谢</span></div>
+    </div>
+  </div>
+
+  <div class="action-card">
+    <div class="action-prio">🔴</div>
+    <div class="action-body">
+      <div class="action-title">需要评估：活性睾固酮偏高（可能 PCOs）</div>
+      <div class="action-desc">
+        <div class="mgmt-panel">建议安排盆腔超声检查，以及空腹血糖+胰岛素检查。同时记录最近3个月的月经周期是否规律，告知妇科医生本次报告结果。</div>
+        <div class="med-panel">Free T 6.52 pg/mL（&gt;3倍正常上限），建议按 Rotterdam 标准完整评估 PCOs：盆腔超声（AFC计数）、HOMA-IR、月经周期记录。如需鉴别 CAH，加测 17α-OHP4。必要时考虑螺内酯（抗雄激素）或口服避孕药（OCP）综合治疗方案。</div>
+      </div>
+      <div class="action-tags"><span class="action-tag rose">⚡ 雄激素</span></div>
+    </div>
+  </div>
+
+  <div class="action-card">
+    <div class="action-prio">🟡</div>
+    <div class="action-body">
+      <div class="action-title">确认：黄体酮高值需对应月经周期判读</div>
+      <div class="action-desc">
+        <div class="mgmt-panel">联系医生确认采血当天是月经第几天，这决定了黄体酮升高是「正常黄体期反应」还是「需要进一步检查」。</div>
+        <div class="med-panel">P4 11.4 ng/mL 的临床意义完全取决于采样时的月经周期阶段，建议补充采样时间信息后重新判读，排除 LUFS 或其他异常。</div>
+      </div>
+      <div class="action-tags"><span class="action-tag rose">🌸 卵巢</span></div>
+    </div>
+  </div>
+
+  <div class="action-card">
+    <div class="action-prio">🟢</div>
+    <div class="action-body">
+      <div class="action-title">保持优势：LH、FSH、E2、DHEA-S 均正常</div>
+      <div class="action-desc">
+        <div class="mgmt-panel">这4项核心指标正常说明卵巢储备良好、脑垂体功能健全、激素原材料储备充足。继续规律作息、适量运动、均衡饮食来维护这些优势。</div>
+        <div class="med-panel">HPO 轴调节功能完整，卵巢储备正常（FSH 4.23），E2 分泌良好（160.5 pg/mL），肾上腺轴 DHEA-S 处于年龄期峰值区间，整体内分泌基础良好。</div>
+      </div>
+      <div class="action-tags"><span class="action-tag teal">🌸 综合</span></div>
+    </div>
+  </div>
+
+  <div class="sec-label">推荐搭配检测</div>
+  <div class="rec-grid">
+    <div class="rec-card">
+      <div class="rec-icon">🧪</div>
+      <div class="rec-name">有机酸检测</div>
+      <div class="rec-sub">评估肠道菌群<br>与 E3 偏低直接相关</div>
+    </div>
+    <div class="rec-card">
+      <div class="rec-icon">🦴</div>
+      <div class="rec-name">骨代谢检测</div>
+      <div class="rec-sub">雌激素保护骨密度<br>建议同步评估</div>
+    </div>
+    <div class="rec-card">
+      <div class="rec-icon">🥗</div>
+      <div class="rec-name">氨基酸分析</div>
+      <div class="rec-sub">配合营养师<br>制定个性化餐食</div>
+    </div>
+    <div class="rec-card">
+      <div class="rec-icon">📊</div>
+      <div class="rec-name">90天后复测</div>
+      <div class="rec-sub">追踪干预效果<br>形成数据闭环</div>
+    </div>
+  </div>
+
+  <div class="report-footer">
+    本报告检测结果只对所接收样本负责<br>
+    请在医生指导下使用本报告的检测结果<br>
+    泊迈生物医学检测（苏州）有限公司 · 功能医学检测报告
+  </div>
+</div>
+
+</div><!-- /scroll-area -->
+
+<script>
+let currentMode = 'mgmt';
+let currentTab = 'overview';
+let selectedSymptom = null;
+
+const symptomData = {
+  acne: {
+    title: '痤疮 → 关联指标分析',
+    mgmt: '痤疮通常与雄激素偏高直接相关。你的活性睾固酮（Free T = 6.52 pg/mL）超出正常上限3倍以上，是导致皮脂腺过度分泌、引发痤疮的主要原因。同时 E3 偏低提示雌激素代谢不畅，也可能加重皮肤状况。',
+    med: 'Free T 6.52 pg/mL（参考 0.89–2.0）显著升高，雄激素受体在皮脂腺过度激活，刺激皮脂分泌，痤疮丙酸杆菌增殖。临床路径：抗雄激素治疗（螺内酯 25–100mg/天）或 OCP 含抗雄激素成分（Drospirenone/CPA 周期），配合局部维A酸。',
+    tags: ['Free T ↑ 6.52', 'E3 ↓ <5', '关联：雄激素代谢']
+  },
+  fatigue: {
+    title: '疲劳乏力 → 关联指标分析',
+    mgmt: 'DHEA-S 和皮质醇相关指标在正常范围，肾上腺功能储备良好，这是好消息。E3 代谢通道受阻可能导致雌激素代谢产物积累，也可能引发轻度疲惫感。整体来看，激素层面疲劳风险较低。',
+    med: '肾上腺皮质激素轴指标正常，排除肾上腺疲劳综合征。E3 偏低引起的雌激素代谢产物（catechol estrogens）积累可能影响线粒体功能。若疲劳持续，建议补充甲状腺功能筛查（T3/T4/TSH）。',
+    tags: ['DHEA-S 正常 ✓', 'E3 ↓ 代谢受阻', 'FSH 正常 ✓']
+  },
+  mood: {
+    title: '情绪波动 → 关联指标分析',
+    mgmt: 'E2（160.5 pg/mL）水平良好，是情绪稳定的重要基础。但 E3 偏低说明雌激素没有被顺利代谢排出，可能造成雌激素代谢产物积累，间接影响血清素和多巴胺的平衡，引发情绪波动。',
+    med: '雌激素代谢产物（特别是 4-OHE）可通过影响 MAO 活性和多巴胺受体，导致情绪不稳定。E3 ↓ 提示 COMT 活性不足，catechol estrogens 代谢受阻，建议评估 COMT 基因多态性（Val158Met），甲基化支持治疗有辅助意义。',
+    tags: ['E2 正常 ✓', 'E3 ↓ <5', 'P4 待确认']
+  },
+  period: {
+    title: '月经不规律 → 关联指标分析',
+    mgmt: '你的 LH 和 FSH 均正常，说明脑垂体和卵巢的「沟通」没问题。但活性睾固酮（Free T）明显偏高，这是多囊卵巢综合征（PCOs）的重要特征，PCOs 是导致月经不规律最常见的原因之一，建议做超声检查确认。',
+    med: 'LH 11.9 / FSH 4.23 mIU/mL 正常，HPO 轴信号正常。但 Free T 6.52（↑ 3.26倍）提示雄激素过多影响卵泡发育和排卵时序。PCOs Rotterdam 标准：①月经稀发/闭经②多囊卵巢形态③生化/临床高雄激素——满足≥2条即诊断。建议盆腔超声+HOMA-IR。',
+    tags: ['Free T ↑ 6.52', 'LH 正常 11.9', 'FSH 正常 4.23']
+  },
+  hair: {
+    title: '多毛/脱发 → 关联指标分析',
+    mgmt: '活性睾固酮（Free T = 6.52 pg/mL）超出正常范围3倍多，是导致多毛（多毛症）和雄激素性脱发的直接原因。雄激素让毛囊「程序重写」：让脸部/身体毛发变粗，同时可能让头皮毛囊萎缩。',
+    med: 'Free T 显著升高，DHT（双氢睾酮）通过 5α-还原酶在皮肤/毛囊局部转化增加，引发毛囊微型化（雄激素性脱发）和多毛症。可评估血清 DHT 水平，5α-还原酶抑制剂（非那雄胺1mg/天）或抗雄激素治疗（螺内酯）可考虑。',
+    tags: ['Free T ↑ 6.52', 'SHBG 正常', 'DHT 转化增加']
+  },
+  weight: {
+    title: '体重增加 → 关联指标分析',
+    mgmt: '雄激素偏高（Free T ↑）常常伴随胰岛素抵抗，导致脂肪更容易囤积在腹部。这是 PCOs 患者常见的「三角关系」：高雄激素→胰岛素抵抗→体重增加→更多雄激素。建议检查空腹胰岛素水平。',
+    med: 'Free T ↑ 与胰岛素抵抗高度相关（OR≈2.5），高胰岛素血症抑制 SHBG 合成，进一步升高游离雄激素，形成正反馈循环。建议 HOMA-IR 评估，若胰岛素抵抗确认，二甲双胍（1500mg/天）可改善 PCOs 代谢表型。',
+    tags: ['Free T ↑ 6.52', 'SHBG 正常 85.3', '建议查胰岛素']
+  },
+  bloat: {
+    title: '腹胀水肿 → 关联指标分析',
+    mgmt: '腹胀水肿常见于「雌激素相对优势」——雌激素积累太多，没有被充分代谢排出。你的 E3 偏低正好说明雌激素排出通道不畅，可能导致轻度水分潴留和腹胀感。',
+    med: 'E3 ↓ 提示雌激素代谢排出不足，雌激素相对优势（estrogen dominance）状态可能存在。雌激素促进肾小管钠潴留，黄体酮不足时拮抗不充分，导致水钠潴留和组织水肿。P4 高值（需确认周期）若处于黄体期则有拮抗作用。',
+    tags: ['E3 ↓ <5', 'P4 需确认周期', 'E2 正常偏高']
+  },
+  sleep: {
+    title: '睡眠问题 → 关联指标分析',
+    mgmt: '黄体酮具有天然的镇静作用（通过 GABA 受体），你的 P4 较高（需确认是否处于黄体期），如果是黄体期正常值则对睡眠有帮助。E3 代谢受阻可能引起轻度雌激素代谢产物积累，间接影响睡眠质量。',
+    med: 'P4 代谢产物别孕烷醇酮（allopregnanolone）为 GABA-A 受体正向调节剂，有镇静促眠作用。E3 ↓ 提示代谢产物积累可能影响神经递质平衡。若睡眠障碍持续，建议评估皮质醇节律（DHEA-S/Cortisol 24h 节律）。',
+    tags: ['P4 需确认 11.4', 'E3 ↓ <5', 'DHEA-S 正常 ✓']
+  },
+  libido: {
+    title: '性欲降低 → 关联指标分析',
+    mgmt: '你的 E2 和 DHEA-S 均在正常范围，是维持性欲的良好基础。Free T 偏高理论上应该维持甚至增强性欲，但如果同时伴随 PCOs 相关的情绪或身体不适，可能间接影响。整体来看，激素层面导致性欲降低的风险较低。',
+    med: 'E2 160.5 pg/mL 及 DHEA-S 1970 ng/mL 均在正常范围，雌激素和前驱物储备充足。Free T ↑ 通常不会降低女性性欲。若性欲低下明确，建议筛查甲状腺功能（TPO-Ab、TSH）及泌乳激素（PRL）排除其他原因。',
+    tags: ['E2 正常 ✓ 160.5', 'DHEA-S 正常 ✓', 'Free T ↑']
+  }
+};
+
+function setMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', ['mgmt','med'][i] === mode);
+  });
+  document.querySelectorAll('.mgmt-panel').forEach(p => p.classList.toggle('hidden', mode === 'med'));
+  document.querySelectorAll('.med-panel').forEach(p => p.classList.toggle('visible', mode === 'med'));
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + tab).classList.add('active');
+  const tabs = document.querySelectorAll('.tab-item');
+  const tabMap = { overview:0, ovary:1, estrogen:2, androgen:3, symptoms:4, plan:5 };
+  tabs.forEach(t => t.classList.remove('active'));
+  tabs[tabMap[tab]]?.classList.add('active');
+  document.getElementById('scroll-area').scrollTop = 0;
+}
+
+function toggleCard(card) {
+  card.classList.toggle('open');
+  const toggle = card.querySelector('.expand-toggle');
+  if (toggle) toggle.textContent = card.classList.contains('open') ? '收起 ▴' : '点击展开详解 ▾';
+}
+
+function showFlowNode(id) {
+  document.querySelectorAll('.flow-desc').forEach(d => d.classList.remove('visible'));
+  document.querySelectorAll('.flow-node').forEach(n => n.classList.remove('active'));
+  const desc = document.getElementById('flow-' + id);
+  if (desc) desc.classList.add('visible');
+  event.currentTarget.classList.add('active');
+}
+
+function selectSymptom(chip, key) {
+  if (selectedSymptom === key) {
+    chip.classList.remove('active');
+    selectedSymptom = null;
+    document.getElementById('symptom-result').classList.remove('visible');
+    return;
+  }
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  selectedSymptom = key;
+
+  const data = symptomData[key];
+  document.getElementById('sr-title').textContent = data.title;
+  document.getElementById('sr-text').textContent = currentMode === 'med' ? data.med : data.mgmt;
+  document.getElementById('sr-tags').innerHTML = data.tags.map(t => `<span class="sr-tag">${t}</span>`).join('');
+  document.getElementById('symptom-result').classList.add('visible');
+}
+
+// Animate health bars on load
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.querySelectorAll('.hbar-fill[data-w]').forEach(bar => {
+      bar.style.width = bar.dataset.w;
+    });
+  }, 400);
+});
+</script>
+</body>
+</html>
