@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>泊迈生物 · 宠物健康检测报告</title>
+<style>
+
+
+:root {
+  --bone: #E8A838;
+  --bone-pale: #FDF5E6;
+  --bone-light: #F5D690;
+  --ox: #E05C6A;
+  --ox-pale: #FDEEF0;
+  --ox-light: #F5A8B0;
+  --acid: #2D9B6B;
+  --acid-pale: #E8F7F1;
+  --acid-light: #8FDFC0;
+  --navy: #1A2E3B;
+  --navy-soft: #243D4F;
+  --slate: #7A9BAD;
+  --slate-light: #C0D4DE;
+  --slate-pale: #EEF4F8;
+  --border: #DDE8EE;
+  --white: #FFFFFF;
+  --ink: #1A2E3B;
+  --good: #2D9B6B;
+  --warn: #E8A838;
+  --bad: #E05C6A;
+  --font: -apple-system, 'PingFang SC', 'Helvetica Neue', 'Microsoft YaHei', 'Hiragino Sans GB', sans-serif;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body { height:100%; overflow:hidden; }
+body {
+  font-family: var(--font);
+  background: #F5F0EB;
+  color: var(--ink);
+  display: flex; flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── MODE TOGGLE ── */
+.mode-bar {
+  background: var(--navy);
+  padding: 10px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.mode-brand { display:flex; align-items:center; gap:10px; }
+.mode-paw {
+  width:34px; height:34px; background:var(--bone);
+  border-radius:10px; display:flex; align-items:center;
+  justify-content:center; font-size:18px;
+}
+.mode-name { color:white; font-size:14px; font-weight:800; line-height:1.2; }
+.mode-sub { color:var(--slate-light); font-size:10px; font-weight:400; }
+.mode-toggle {
+  display:flex; background:rgba(255,255,255,0.1);
+  border:1px solid rgba(255,255,255,0.15);
+  border-radius:20px; padding:3px; gap:2px;
+}
+.mode-btn {
+  padding:5px 12px; border-radius:16px;
+  font-size:11px; font-weight:700; cursor:pointer; border:none;
+  background:transparent; color:rgba(255,255,255,0.5);
+  transition:all 0.2s;
+}
+.mode-btn.active { background:white; color:var(--ink); }
+
+/* ── PET HERO ── */
+.pet-hero {
+  background: linear-gradient(135deg, var(--navy) 0%, #2D4A5A 100%);
+  padding: 16px 16px 20px;
+  position: relative; overflow: hidden;
+  flex-shrink: 0;
+}
+.pet-hero::before {
+  content:'🐾';
+  position:absolute; right:-10px; top:-10px;
+  font-size:100px; opacity:0.05; transform:rotate(20deg);
+}
+.pet-row { display:flex; align-items:center; gap:14px; position:relative; z-index:1; }
+.pet-avatar {
+  width:60px; height:60px; border-radius:50%;
+  background: linear-gradient(135deg,#F5D690,var(--bone));
+  display:flex; align-items:center; justify-content:center;
+  font-size:30px; flex-shrink:0;
+  box-shadow:0 4px 16px rgba(0,0,0,0.2);
+  border:3px solid rgba(255,255,255,0.2);
+}
+.pet-info { flex:1; }
+.pet-name { font-size:22px; font-weight:900; color:white; }
+.pet-meta { color:var(--slate-light); font-size:12px; margin-top:3px; }
+.report-info { text-align:right; flex-shrink:0; }
+.report-date-label { color:var(--slate-light); font-size:9px; text-transform:uppercase; letter-spacing:0.08em; }
+.report-date { color:white; font-size:12px; font-weight:700; margin-top:2px; }
+
+/* Overall score row */
+.score-row {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:8px; margin-top:14px; position:relative; z-index:1;
+}
+.score-pill {
+  border-radius:12px; padding:10px 10px 8px;
+  text-align:center; cursor:pointer;
+  transition:transform 0.2s;
+}
+.score-pill:active { transform:scale(0.96); }
+.score-pill.bone { background:rgba(232,168,56,0.2); border:1px solid rgba(232,168,56,0.3); }
+.score-pill.ox { background:rgba(224,92,106,0.2); border:1px solid rgba(224,92,106,0.3); }
+.score-pill.acid { background:rgba(45,155,107,0.2); border:1px solid rgba(45,155,107,0.3); }
+.score-icon { font-size:18px; }
+.score-name { font-size:9px; color:rgba(255,255,255,0.6); margin-top:3px; font-weight:600; text-transform:uppercase; letter-spacing:0.04em; }
+.score-val { font-size:22px; font-weight:900; line-height:1; margin-top:2px; }
+.score-pill.bone .score-val { color:var(--bone); }
+.score-pill.ox .score-val { color:var(--ox-light); }
+.score-pill.acid .score-val { color:var(--acid-light); }
+.score-grade { font-size:10px; font-weight:700; margin-top:1px; }
+.score-pill.bone .score-grade { color:rgba(232,168,56,0.7); }
+.score-pill.ox .score-grade { color:rgba(240,168,176,0.7); }
+.score-pill.acid .score-grade { color:rgba(143,223,192,0.7); }
+
+/* ── TABS ── */
+.tab-bar {
+  background:white; border-bottom:1px solid var(--border);
+  display:flex; overflow-x:auto; flex-shrink:0;
+  -webkit-overflow-scrolling:touch;
+}
+.tab-bar::-webkit-scrollbar { display:none; }
+.tab-item {
+  flex:1; min-width:80px; padding:11px 8px;
+  text-align:center; cursor:pointer; border:none; background:none;
+  font-family:var(--font); transition:all 0.2s;
+  border-bottom:3px solid transparent;
+  display:flex; flex-direction:column; align-items:center; gap:2px;
+}
+.tab-icon { font-size:16px; }
+.tab-label { font-size:10px; font-weight:700; color:var(--slate); }
+.tab-item.active .tab-label { color:var(--ink); }
+.tab-item.bone.active { border-bottom-color:var(--bone); }
+.tab-item.bone.active .tab-label { color:var(--bone); }
+.tab-item.ox.active { border-bottom-color:var(--ox); }
+.tab-item.ox.active .tab-label { color:var(--ox); }
+.tab-item.acid.active { border-bottom-color:var(--acid); }
+.tab-item.acid.active .tab-label { color:var(--acid); }
+.tab-item.plan.active { border-bottom-color:var(--navy); }
+.tab-item.plan.active .tab-label { color:var(--navy); }
+
+/* ── SCROLL ── */
+.scroll-area {
+  flex:1; overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  padding:14px 14px 80px;
+}
+.scroll-area::-webkit-scrollbar { display:none; }
+
+/* ── VIEWS ── */
+.view { display:none; }
+.view.active { display:block; animation:fadeUp 0.25s ease; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── SECTION LABEL ── */
+.sec-label {
+  font-size:10px; font-weight:800; letter-spacing:0.1em;
+  text-transform:uppercase; color:var(--slate); margin:16px 0 8px;
+}
+.sec-label:first-child { margin-top:0; }
+
+/* ── CARD ── */
+.card {
+  background:white; border-radius:16px;
+  border:1px solid var(--border); margin-bottom:10px;
+  overflow:hidden;
+}
+.card-head {
+  padding:13px 16px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.card-title { font-size:14px; font-weight:800; color:var(--ink); }
+.card-action { font-size:12px; font-weight:700; cursor:pointer; }
+.card-action.bone { color:var(--bone); }
+.card-action.ox { color:var(--ox); }
+.card-action.acid { color:var(--acid); }
+
+/* ── INDICATOR CARDS ── */
+.indicator-card {
+  background:white; border-radius:14px; border:1px solid var(--border);
+  padding:14px 16px; margin-bottom:8px;
+  cursor:pointer; transition:all 0.2s;
+  border-left:4px solid var(--border);
+  position:relative; overflow:hidden;
+}
+.indicator-card.good { border-left-color:var(--good); }
+.indicator-card.warn { border-left-color:var(--warn); }
+.indicator-card.bad { border-left-color:var(--bad); }
+.indicator-card:active { transform:scale(0.99); }
+
+.ind-top { display:flex; align-items:flex-start; justify-content:space-between; }
+.ind-left { flex:1; }
+.ind-name { font-size:13px; font-weight:800; color:var(--ink); }
+.ind-name-en { font-size:10px; color:var(--slate); font-weight:600; margin-top:1px; }
+.ind-status {
+  display:inline-flex; align-items:center; gap:4px;
+  font-size:10px; font-weight:800; padding:3px 8px;
+  border-radius:8px; text-transform:uppercase; flex-shrink:0; margin-left:8px;
+}
+.ind-status.good { background:rgba(45,155,107,0.12); color:var(--good); }
+.ind-status.warn { background:rgba(232,168,56,0.15); color:#A06A10; }
+.ind-status.bad { background:rgba(224,92,106,0.12); color:var(--bad); }
+
+.ind-value-row { display:flex; align-items:baseline; gap:6px; margin:8px 0 6px; }
+.ind-val { font-size:26px; font-weight:900; line-height:1; }
+.ind-val.good { color:var(--good); }
+.ind-val.warn { color:var(--warn); }
+.ind-val.bad { color:var(--bad); }
+.ind-unit { font-size:11px; color:var(--slate); font-weight:600; }
+.ind-ref { font-size:11px; color:var(--slate); }
+
+/* Range bar */
+.range-wrap { margin:4px 0; }
+.range-track {
+  height:8px; background:var(--slate-pale);
+  border-radius:4px; position:relative; overflow:visible;
+}
+.range-zone {
+  position:absolute; height:100%; border-radius:4px;
+  background:rgba(45,155,107,0.15);
+}
+.range-dot {
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:14px; height:14px; border-radius:50%;
+  border:2.5px solid white; box-shadow:0 2px 6px rgba(0,0,0,0.15);
+}
+.range-dot.good { background:var(--good); }
+.range-dot.warn { background:var(--warn); }
+.range-dot.bad { background:var(--bad); }
+
+/* Expand panel */
+.expand-panel { display:none; margin-top:12px; padding-top:12px; border-top:1px dashed var(--border); }
+.indicator-card.open .expand-panel { display:block; }
+.expand-mode { margin-bottom:10px; }
+.expand-label { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px; }
+.expand-label.vet { color:var(--navy); }
+.expand-label.owner { color:var(--bone); }
+
+/* Owner mode boxes */
+.owner-box {
+  background:linear-gradient(135deg,#FFF9EE,var(--bone-pale));
+  border:1px solid var(--bone-light);
+  border-radius:10px; padding:10px 12px;
+  font-size:13px; line-height:1.7; color:#5A3D0A;
+}
+.vet-box {
+  background:var(--slate-pale);
+  border:1px solid var(--border);
+  border-radius:10px; padding:10px 12px;
+  font-size:12px; line-height:1.7; color:var(--navy);
+}
+.tip-box {
+  border-radius:10px; padding:10px 12px;
+  font-size:12px; line-height:1.7; margin-top:8px;
+}
+.tip-box.good { background:rgba(45,155,107,0.08); color:#1A5C3A; border:1px solid rgba(45,155,107,0.2); }
+.tip-box.warn { background:rgba(232,168,56,0.08); color:#7A4C00; border:1px solid rgba(232,168,56,0.2); }
+.tip-box.bad { background:rgba(224,92,106,0.08); color:#8A1A26; border:1px solid rgba(224,92,106,0.2); }
+
+/* ── DOG BODY MAP ── */
+.body-map-card { background:white; border-radius:16px; border:1px solid var(--border); padding:16px; margin-bottom:10px; }
+.body-map-title { font-size:14px; font-weight:800; margin-bottom:12px; }
+.body-map-svg { width:100%; position:relative; }
+.body-map-svg svg { width:100%; height:auto; }
+.hotspot {
+  cursor:pointer; transition:all 0.2s;
+}
+.hotspot:hover circle { transform:scale(1.3); transform-origin:center; }
+.hotspot-label {
+  font-size:10px; font-weight:700; fill:#1A2E3B;
+}
+.impact-list { display:flex; flex-direction:column; gap:6px; margin-top:12px; }
+.impact-row { display:flex; gap:10px; align-items:center; padding:8px 12px; border-radius:10px; }
+.impact-row.bone { background:var(--bone-pale); }
+.impact-row.ox { background:var(--ox-pale); }
+.impact-row.acid { background:var(--acid-pale); }
+.impact-icon { font-size:18px; flex-shrink:0; }
+.impact-text { font-size:12px; line-height:1.5; }
+.impact-text strong { font-weight:800; }
+
+/* ── OXIDATIVE STRESS VISUAL ── */
+.stress-meter {
+  background: linear-gradient(135deg, var(--navy), #2D4A5A);
+  border-radius:16px; padding:20px; margin-bottom:10px;
+  position:relative; overflow:hidden;
+}
+.stress-meter::before {
+  content:'⚡';
+  position:absolute; right:-10px; top:-10px;
+  font-size:80px; opacity:0.06;
+}
+.stress-title { color:white; font-size:14px; font-weight:800; margin-bottom:16px; }
+.stress-gauges { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+.gauge-item { text-align:center; }
+.gauge-circle {
+  width:64px; height:64px; border-radius:50%;
+  margin:0 auto 6px; display:flex; align-items:center;
+  justify-content:center; flex-direction:column;
+  position:relative;
+}
+.gauge-circle svg { position:absolute; top:0; left:0; width:100%; height:100%; transform:rotate(-90deg); }
+.gauge-circle .gauge-val { font-size:14px; font-weight:900; color:white; position:relative; z-index:1; line-height:1; }
+.gauge-circle .gauge-unit { font-size:8px; color:rgba(255,255,255,0.6); position:relative; z-index:1; }
+.gauge-name { font-size:9px; font-weight:700; color:rgba(255,255,255,0.6); text-transform:uppercase; letter-spacing:0.04em; }
+.gauge-status { font-size:10px; font-weight:800; margin-top:2px; }
+
+.free-radical-viz {
+  background:rgba(255,255,255,0.06); border-radius:12px;
+  padding:12px; margin-top:12px;
+  display:flex; align-items:center; gap:12px;
+}
+.radical-icon { font-size:28px; }
+.radical-text { font-size:12px; color:rgba(255,255,255,0.75); line-height:1.6; flex:1; }
+.radical-text strong { color:white; }
+
+/* ── ORGANIC ACID GROUPS ── */
+.oa-group {
+  background:white; border-radius:14px; border:1px solid var(--border);
+  margin-bottom:10px; overflow:hidden;
+}
+.oa-group-head {
+  padding:12px 16px; display:flex; align-items:center;
+  justify-content:space-between; cursor:pointer;
+}
+.oa-group-name { font-size:13px; font-weight:800; }
+.oa-group-badge {
+  font-size:10px; font-weight:700; padding:3px 8px; border-radius:8px;
+}
+.oa-group-badge.all-good { background:var(--acid-pale); color:var(--acid); }
+.oa-group-badge.has-warn { background:var(--bone-pale); color:var(--bone); }
+.oa-group-badge.has-bad { background:var(--ox-pale); color:var(--ox); }
+.oa-group-items { border-top:1px solid var(--border); }
+.oa-item {
+  display:flex; align-items:center; gap:10px;
+  padding:10px 16px; border-bottom:1px solid var(--border);
+}
+.oa-item:last-child { border-bottom:none; }
+.oa-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.oa-dot.good { background:var(--good); }
+.oa-dot.warn { background:var(--warn); }
+.oa-dot.bad { background:var(--bad); }
+.oa-name { flex:1; font-size:12px; font-weight:600; }
+.oa-val { font-size:12px; font-weight:800; }
+.oa-val.good { color:var(--good); }
+.oa-val.warn { color:var(--warn); }
+.oa-val.bad { color:var(--bad); }
+.oa-ref { font-size:10px; color:var(--slate); margin-left:4px; }
+.oa-group-hidden { display:none; }
+
+/* ── ACTION PLAN ── */
+.retest-card {
+  background:linear-gradient(135deg, var(--navy), #2D4A5A);
+  border-radius:16px; padding:18px; margin-bottom:10px;
+  position:relative; overflow:hidden;
+}
+.retest-card::after {
+  content:'🐾';
+  position:absolute; right:-5px; bottom:-10px;
+  font-size:70px; opacity:0.06;
+}
+.retest-title { color:white; font-size:16px; font-weight:900; margin-bottom:6px; }
+.retest-desc { color:rgba(255,255,255,0.65); font-size:12px; line-height:1.6; margin-bottom:14px; }
+.retest-countdown { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+.retest-circle {
+  width:72px; height:72px; border-radius:50%;
+  border:3px solid rgba(232,168,56,0.5);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+.retest-days { font-size:28px; font-weight:900; color:white; line-height:1; }
+.retest-day-label { font-size:9px; color:var(--bone-light); letter-spacing:0.06em; }
+.retest-info { color:rgba(255,255,255,0.7); font-size:12px; line-height:1.7; }
+.retest-btn {
+  width:100%; padding:12px; border-radius:12px;
+  background:var(--bone); color:white; font-size:14px; font-weight:800;
+  border:none; cursor:pointer; font-family:var(--font);
+  transition:all 0.15s;
+}
+.retest-btn:active { background:var(--bone-light); transform:scale(0.98); }
+
+.action-card {
+  background:white; border-radius:14px; border:1px solid var(--border);
+  padding:14px 16px; margin-bottom:8px;
+  display:flex; gap:12px; align-items:flex-start;
+}
+.action-priority { font-size:22px; flex-shrink:0; }
+.action-body { flex:1; }
+.action-title { font-size:13px; font-weight:800; color:var(--ink); margin-bottom:4px; }
+.action-desc { font-size:12px; color:var(--slate); line-height:1.6; }
+.action-tags { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
+.action-tag {
+  font-size:10px; font-weight:700; padding:3px 8px; border-radius:8px;
+}
+.action-tag.bone { background:var(--bone-pale); color:var(--bone); }
+.action-tag.ox { background:var(--ox-pale); color:var(--ox); }
+.action-tag.acid { background:var(--acid-pale); color:var(--acid); }
+
+/* ── SUMMARY OVERALL ── */
+.overall-card {
+  background:white; border-radius:16px; border:1px solid var(--border);
+  padding:16px; margin-bottom:10px;
+}
+.overall-title { font-size:15px; font-weight:900; margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+.health-bars { display:flex; flex-direction:column; gap:10px; }
+.hbar { display:flex; align-items:center; gap:10px; }
+.hbar-label { font-size:12px; font-weight:700; width:80px; flex-shrink:0; }
+.hbar-track { flex:1; height:10px; background:var(--slate-pale); border-radius:5px; overflow:hidden; }
+.hbar-fill { height:100%; border-radius:5px; transition:width 1s cubic-bezier(0.4,0,0.2,1); }
+.hbar-val { font-size:12px; font-weight:800; width:40px; text-align:right; flex-shrink:0; }
+
+/* ── VET PANEL ── */
+.vet-panel { display:none; }
+.vet-panel.visible { display:block; }
+.owner-panel { display:block; }
+.owner-panel.hidden { display:none; }
+
+/* Tags */
+.tag {
+  display:inline-flex; align-items:center;
+  font-size:10px; font-weight:700; padding:3px 8px; border-radius:8px;
+}
+.tag.good { background:rgba(45,155,107,0.1); color:var(--good); }
+.tag.warn { background:rgba(232,168,56,0.12); color:#A06A10; }
+.tag.bad { background:rgba(224,92,106,0.1); color:var(--bad); }
+
+/* Divider */
+.divider { height:1px; background:var(--border); margin:12px 0; }
+
+/* Friendly message */
+.friendly-msg {
+  background:linear-gradient(135deg,#FFF9EE,#FFF3D6);
+  border:1.5px solid var(--bone-light); border-radius:14px;
+  padding:14px 16px; margin-bottom:10px;
+  display:flex; gap:12px; align-items:flex-start;
+}
+.friendly-emoji { font-size:28px; flex-shrink:0; }
+.friendly-text { font-size:13px; line-height:1.7; color:#5A3D0A; }
+.friendly-text strong { font-weight:800; }
+
+/* Scroll reveal */
+.reveal { opacity:0; transform:translateY(12px); transition:all 0.4s ease; }
+.reveal.shown { opacity:1; transform:translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- MODE BAR -->
+<div class="mode-bar">
+  <div class="mode-brand">
+    <div class="mode-paw">🐾</div>
+    <div>
+      <div class="mode-name">泊迈宠物健康检测</div>
+      <div class="mode-sub">Biomedicine Pet Health Report</div>
+    </div>
+  </div>
+  <div class="mode-toggle">
+    <button class="mode-btn active" onclick="setMode('owner')">🐶 宠主</button>
+    <button class="mode-btn" onclick="setMode('vet')">🩺 兽医</button>
+  </div>
+</div>
+
+<!-- PET HERO -->
+<div class="pet-hero">
+  <div class="pet-row">
+    <div class="pet-avatar">🐕</div>
+    <div class="pet-info">
+      <div class="pet-name">旺财</div>
+      <div class="pet-meta">金毛寻回犬 · 公 · 5岁 · 28kg · 编号 PET-20260316</div>
+    </div>
+    <div class="report-info">
+      <div class="report-date-label">采样日期</div>
+      <div class="report-date">2026.03.16</div>
+      <div class="report-date-label" style="margin-top:5px">报告日期</div>
+      <div class="report-date">2026.03.23</div>
+    </div>
+  </div>
+
+  <div class="score-row">
+    <div class="score-pill bone" onclick="switchTab('bone')">
+      <div class="score-icon">🦴</div>
+      <div class="score-name">骨骼代谢</div>
+      <div class="score-val">72</div>
+      <div class="score-grade">需要关注</div>
+    </div>
+    <div class="score-pill ox" onclick="switchTab('ox')">
+      <div class="score-icon">⚡</div>
+      <div class="score-name">氧化压力</div>
+      <div class="score-val">85</div>
+      <div class="score-grade">状态良好</div>
+    </div>
+    <div class="score-pill acid" onclick="switchTab('acid')">
+      <div class="score-icon">🧪</div>
+      <div class="score-name">代谢功能</div>
+      <div class="score-val">68</div>
+      <div class="score-grade">需要干预</div>
+    </div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tab-bar">
+  <button class="tab-item active bone" onclick="switchTab('overview')">
+    <span class="tab-icon">🐾</span>
+    <span class="tab-label">总览</span>
+  </button>
+  <button class="tab-item bone" onclick="switchTab('bone')">
+    <span class="tab-icon">🦴</span>
+    <span class="tab-label">骨代谢</span>
+  </button>
+  <button class="tab-item ox" onclick="switchTab('ox')">
+    <span class="tab-icon">⚡</span>
+    <span class="tab-label">氧化压力</span>
+  </button>
+  <button class="tab-item acid" onclick="switchTab('acid')">
+    <span class="tab-icon">🧪</span>
+    <span class="tab-label">有机酸</span>
+  </button>
+  <button class="tab-item plan" onclick="switchTab('plan')">
+    <span class="tab-icon">📋</span>
+    <span class="tab-label">行动计划</span>
+  </button>
+</div>
+
+<!-- SCROLL AREA -->
+<div class="scroll-area" id="scroll-area">
+
+<!-- ════ OVERVIEW ════ -->
+<div class="view active" id="view-overview">
+
+  <!-- Owner mode -->
+  <div class="owner-panel" id="owner-overview">
+    <div class="friendly-msg">
+      <div class="friendly-emoji">🐶</div>
+      <div class="friendly-text">
+        <strong>旺财这次体检有3个项目需要注意：</strong><br>
+        骨骼健康方面<strong>维生素D偏低</strong>，需要补充。代谢功能有几项<strong>肠道菌群指标偏高</strong>，建议调整饮食。抗氧化能力整体良好，继续保持！
+      </div>
+    </div>
+
+    <div class="overall-card">
+      <div class="overall-title">🏆 旺财的健康评分</div>
+      <div class="health-bars">
+        <div class="hbar">
+          <div class="hbar-label">🦴 骨骼</div>
+          <div class="hbar-track"><div class="hbar-fill" style="width:0%;background:var(--bone)" data-w="72%"></div></div>
+          <div class="hbar-val" style="color:var(--bone)">72分</div>
+        </div>
+        <div class="hbar">
+          <div class="hbar-label">⚡ 抗氧化</div>
+          <div class="hbar-track"><div class="hbar-fill" style="width:0%;background:var(--good)" data-w="85%"></div></div>
+          <div class="hbar-val" style="color:var(--good)">85分</div>
+        </div>
+        <div class="hbar">
+          <div class="hbar-label">🧪 代谢</div>
+          <div class="hbar-track"><div class="hbar-fill" style="width:0%;background:var(--acid)" data-w="68%"></div></div>
+          <div class="hbar-val" style="color:var(--acid)">68分</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dog body impact map -->
+    <div class="body-map-card">
+      <div class="body-map-title">📍 检测结果影响的身体部位</div>
+      <div style="background:var(--slate-pale);border-radius:12px;padding:16px;text-align:center;font-size:48px;letter-spacing:8px">
+        🐕
+      </div>
+      <div class="impact-list">
+        <div class="impact-row bone">
+          <div class="impact-icon">🦴</div>
+          <div class="impact-text"><strong>关节和骨骼</strong> — 维生素D偏低 + 骨钙素偏低，旺财的骨密度维持能力可能下降，5岁的金毛需要特别关注关节健康</div>
+        </div>
+        <div class="impact-row acid">
+          <div class="impact-icon">🍽️</div>
+          <div class="impact-text"><strong>肠胃消化系统</strong> — 肠道菌群标志物偏高，说明肠道生态有轻度失调，可能导致消化不规律或食欲变化</div>
+        </div>
+        <div class="impact-row ox">
+          <div class="impact-icon">💪</div>
+          <div class="impact-text"><strong>细胞和免疫力</strong> — 抗氧化指标整体良好，旺财的免疫防御系统运作正常，继续保持！</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vet mode -->
+  <div class="vet-panel" id="vet-overview">
+    <div class="sec-label">临床综合评估</div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">三项检测综合结论</div></div>
+      <div style="padding:14px 16px">
+        <div class="vet-box" style="margin-bottom:10px">
+          <strong>骨代谢：</strong>25-OH维生素D（58.25 nmol/L）低于参考下限（>75 nmol/L），骨钙素（BGP）14.25 ng/ml偏低（参考值18-29岁：24-70），提示成骨细胞活性不足，长期可能导致骨密度下降，建议补充VD3及钙质。
+        </div>
+        <div class="vet-box" style="margin-bottom:10px">
+          <strong>氧化压力：</strong>SOD、GSH-PX、GSH、T-AOC均在参考范围内，MDA（脂质过氧化指标）2.9 mmol/mL正常，提示体内自由基与抗氧化系统处于动态平衡，细胞损伤风险低。
+        </div>
+        <div class="vet-box">
+          <strong>有机酸：</strong>肠道菌群相关指标（DHPPA↑1.59、苹果酸↑2.61）提示肠道生态失调，嘧啶代谢中胸腺嘧啶偏高（1.12，参考≤0.68），磷酸偏低（560.21，参考1000-4900），提示DNA甲基化叶酸代谢可能受影响。
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ BONE METABOLISM ════ -->
+<div class="view" id="view-bone">
+
+  <div class="owner-panel" id="owner-bone">
+    <div class="friendly-msg">
+      <div class="friendly-emoji">🦴</div>
+      <div class="friendly-text">
+        旺财的骨骼健康需要<strong>重点关注</strong>！维生素D偏低，这就像骨骼的"阳光能量"不够用，建议增加户外活动时间和补充维生素D。
+      </div>
+    </div>
+  </div>
+  <div class="vet-panel" id="vet-bone">
+    <div class="sec-label">骨代谢分析 · Bone Metabolism Analysis</div>
+  </div>
+
+  <!-- Indicators -->
+  <div class="indicator-card warn open" onclick="toggleCard(this)">
+    <div class="ind-top">
+      <div class="ind-left">
+        <div class="ind-name">25-羟维生素D</div>
+        <div class="ind-name-en">25-OH Vitamin D</div>
+      </div>
+      <span class="ind-status warn">⚠ 偏低</span>
+    </div>
+    <div class="ind-value-row">
+      <div class="ind-val warn">58.25</div>
+      <div class="ind-unit">nmol/L</div>
+    </div>
+    <div class="range-wrap">
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--slate);margin-bottom:4px">
+        <span>不足 (&lt;50)</span><span>参考 &gt;75</span><span>充足 (100+)</span>
+      </div>
+      <div class="range-track">
+        <div class="range-zone" style="left:40%;width:60%"></div>
+        <div class="range-dot warn" style="left:37%"></div>
+      </div>
+    </div>
+    <div class="expand-panel">
+      <div class="expand-mode owner-panel">
+        <div class="expand-label owner">🐶 宠主版解读</div>
+        <div class="owner-box">
+          维生素D就像骨骼的「阳光能量」，帮助身体吸收钙质。旺财的维生素D偏低，意味着就算吃了足够的钙，身体也没法充分吸收。金毛犬容易患髋关节问题，维生素D不足会加速这个风险。<br><br>
+          💡 <strong>建议：</strong>每天保证30分钟以上户外活动（不要只在阴凉处），或在兽医指导下补充宠物专用VD3。
+        </div>
+      </div>
+      <div class="expand-mode vet-panel">
+        <div class="expand-label vet">🩺 兽医版解读</div>
+        <div class="vet-box">
+          检测值58.25 nmol/L处于不足区间（参考&gt;75 nmol/L）。犬类VD主要通过食物来源，皮肤光合作用效率较人类低。需排查是否存在慢性肠病影响脂溶性维生素吸收。建议补充VD3（400-600 IU/天），8周后复测。
+        </div>
+        <div class="tip-box warn">⚠️ <strong>临床关注点：</strong>VD缺乏与犬骨质疏松、骨软化症及免疫调节功能下降有关，金毛5岁起关节退行性变进入加速期，需尽早干预。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="indicator-card good" onclick="toggleCard(this)">
+    <div class="ind-top">
+      <div class="ind-left">
+        <div class="ind-name">血钙</div>
+        <div class="ind-name-en">Calcium (Ca)</div>
+      </div>
+      <span class="ind-status good">✓ 正常</span>
+    </div>
+    <div class="ind-value-row">
+      <div class="ind-val good">99</div>
+      <div class="ind-unit">mg/L</div>
+      <div class="ind-ref">参考 84–104</div>
+    </div>
+    <div class="range-wrap">
+      <div class="range-track">
+        <div class="range-zone" style="left:0%;width:100%"></div>
+        <div class="range-dot good" style="left:75%"></div>
+      </div>
+    </div>
+    <div class="expand-panel">
+      <div class="expand-mode owner-panel">
+        <div class="expand-label owner">🐶 宠主版解读</div>
+        <div class="owner-box">血钙正常，说明旺财血液中的钙含量适当，心脏跳动、肌肉收缩、神经传导都运作正常。这是个好消息！</div>
+      </div>
+      <div class="expand-mode vet-panel">
+        <div class="expand-label vet">🩺 兽医版解读</div>
+        <div class="vet-box">血清总钙99 mg/L处于正常范围，提示PTH与降钙素的钙稳态调节功能完整。尽管VD偏低，机体通过PTH代偿维持了正常血钙水平，长期代偿会加速骨质流失。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="indicator-card good" onclick="toggleCard(this)">
+    <div class="ind-top">
+      <div class="ind-left">
+        <div class="ind-name">副甲状腺素</div>
+        <div class="ind-name-en">PTH</div>
+      </div>
+      <span class="ind-status good">✓ 正常</span>
+    </div>
+    <div class="ind-value-row">
+      <div class="ind-val good">29.8</div>
+      <div class="ind-unit">pg/ml</div>
+      <div class="ind-ref">参考 12–88</div>
+    </div>
+    <div class="range-wrap">
+      <div class="range-track">
+        <div class="range-zone" style="left:0%;width:100%"></div>
+        <div class="range-dot good" style="left:24%"></div>
+      </div>
+    </div>
+    <div class="expand-panel">
+      <div class="expand-mode owner-panel">
+        <div class="expand-label owner">🐶 宠主版解读</div>
+        <div class="owner-box">这个激素负责调节血液中的钙含量，旺财的PTH值正常，说明身体的钙调节系统运作正常。</div>
+      </div>
+      <div class="expand-mode vet-panel">
+        <div class="expand-label vet">🩺 兽医版解读</div>
+        <div class="vet-box">PTH 29.8 pg/ml处于正常低值，与血钙正常一致，暂无继发性甲状旁腺机能亢进迹象。建议结合VD补充后的定期复测评估骨代谢动态。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="indicator-card bad" onclick="toggleCard(this)">
+    <div class="ind-top">
+      <div class="ind-left">
+        <div class="ind-name">骨钙素</div>
+        <div class="ind-name-en">BGP (Osteocalcin)</div>
+      </div>
+      <span class="ind-status bad">↓ 偏低</span>
+    </div>
+    <div class="ind-value-row">
+      <div class="ind-val bad">14.25</div>
+      <div class="ind-unit">ng/ml</div>
+      <div class="ind-ref">参考 18–29岁：24–70</div>
+    </div>
+    <div class="range-wrap">
+      <div class="range-track">
+        <div class="range-zone" style="left:25%;width:65%"></div>
+        <div class="range-dot bad" style="left:8%"></div>
+      </div>
+    </div>
+    <div class="expand-panel">
+      <div class="expand-mode owner-panel">
+        <div class="expand-label owner">🐶 宠主版解读</div>
+        <div class="owner-box">
+          骨钙素是由<strong>造骨细胞</strong>分泌的，它越多说明骨骼生长越活跃。旺财的骨钙素偏低，说明骨骼更新速度有点慢，就像骨骼的"建筑工人"不够忙碌。<br><br>
+          💡 <strong>建议：</strong>配合维生素D的补充，同时增加适量运动可以刺激骨骼代谢，让造骨细胞更活跃。
+        </div>
+      </div>
+      <div class="expand-mode vet-panel">
+        <div class="expand-label vet">🩺 兽医版解读</div>
+        <div class="vet-box">BGP 14.25 ng/ml低于参考值下限，提示成骨细胞活性不足，骨形成速率偏低。结合VD缺乏，骨代谢处于"低转换型"状态，不利于骨密度维持。维生素K2（促进BGP羧基化活化）的补充可能有辅助意义。</div>
+        <div class="tip-box bad">⚠️ 骨钙素低 + 维生素D低 = 骨密度下降双重风险因子，建议尽快制定干预方案并3个月后复测。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="indicator-card good" onclick="toggleCard(this)">
+    <div class="ind-top">
+      <div class="ind-left">
+        <div class="ind-name">降钙素</div>
+        <div class="ind-name-en">Calcitonin (CT)</div>
+      </div>
+      <span class="ind-status good">✓ 正常</span>
+    </div>
+    <div class="ind-value-row">
+      <div class="ind-val good">1.70</div>
+      <div class="ind-unit">ng/l</div>
+      <div class="ind-ref">参考 0–5.0（女）/ 0–8.4（男）</div>
+    </div>
+    <div class="expand-panel">
+      <div class="expand-mode owner-panel">
+        <div class="expand-label owner">🐶 宠主版解读</div>
+        <div class="owner-box">降钙素负责降低血液中的钙，防止钙流失过快。旺财的降钙素正常，甲状腺的C细胞功能健康。</div>
+      </div>
+      <div class="expand-mode vet-panel">
+        <div class="expand-label vet">🩺 兽医版解读</div>
+        <div class="vet-box">CT值正常，甲状腺旁细胞分泌功能正常，无甲状腺肿瘤引起的CT异常升高迹象。</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ OXIDATIVE STRESS ════ -->
+<div class="view" id="view-ox">
+
+  <div class="owner-panel" id="owner-ox">
+    <div class="friendly-msg">
+      <div class="friendly-emoji">💪</div>
+      <div class="friendly-text">
+        <strong>氧化压力检测：旺财表现优秀！</strong><br>
+        抗氧化能力良好，自由基处于平衡状态，细胞损伤风险低。继续保持均衡饮食！
+      </div>
+    </div>
+  </div>
+
+  <!-- Oxidative Stress Visual -->
+  <div class="stress-meter">
+    <div class="stress-title">⚡ 抗氧化能力仪表盘</div>
+    <div class="stress-gauges">
+      <div class="gauge-item">
+        <div class="gauge-circle">
+          <svg viewBox="0 0 64 64">
+            <circle cx="32" cy="32" r="28" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="5"/>
+            <circle cx="32" cy="32" r="28" fill="none" stroke="#2D9B6B" stroke-width="5"
+              stroke-dasharray="176" stroke-dashoffset="60" stroke-linecap="round"/>
+          </svg>
+          <div class="gauge-val">25.2</div>
+          <div class="gauge-unit">U/ml</div>
+        </div>
+        <div class="gauge-name">SOD</div>
+        <div class="gauge-status" style="color:#8FDFC0">✓ 正常</div>
+      </div>
+      <div class="gauge-item">
+        <div class="gauge-circle">
+          <svg viewBox="0 0 64 64">
+            <circle cx="32" cy="32" r="28" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="5"/>
+            <circle cx="32" cy="32" r="28" fill="none" stroke="#2D9B6B" stroke-width="5"
+              stroke-dasharray="176" stroke-dashoffset="45" stroke-linecap="round"/>
+          </svg>
+          <div class="gauge-val">199.6</div>
+          <div class="gauge-unit">U/ml</div>
+        </div>
+        <div class="gauge-name">GSH-PX</div>
+        <div class="gauge-status" style="color:#8FDFC0">✓ 正常</div>
+      </div>
+      <div class="gauge-item">
+        <div class="gauge-circle">
+          <svg viewBox="0 0 64 64">
+            <circle cx="32" cy="32" r="28" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="5"/>
+            <circle cx="32" cy="32" r="28" fill="none" stroke="#E8A838" stroke-width="5"
+              stroke-dasharray="176" stroke-dashoffset="100" stroke-linecap="round"/>
+          </svg>
+          <div class="gauge-val">14.6</div>
+          <div class="gauge-unit">U/ml</div>
+        </div>
+        <div class="gauge-name">T-AOC</div>
+        <div class="gauge-status" style="color:var(--bone-light)">✓ 正常</div>
+      </div>
+    </div>
+    <div class="free-radical-viz">
+      <div class="radical-icon">🛡️</div>
+      <div class="radical-text">
+        旺财体内的抗氧化酶系统运作正常。<strong>SOD清除超氧自由基，GSH-PX分解过氧化物，GSH提供还原力</strong>，三道防线协同保护细胞免受氧化损伤。
+      </div>
+    </div>
+  </div>
+
+  <!-- Individual indicators -->
+  <div class="sec-label">抗氧化指标详情</div>
+
+  <div class="indicator-card good" onclick="toggleCard(this)">
+    <div class="ind-top">
+      <div class="ind-left">
+        <div class="ind-name">超氧化物歧化酶</div>
+        <div class="ind-name-en">SOD</div>
+      </div>
+      <span class="ind-status good">✓ 正常</span>
+    </div>
+    <div class="ind-value-row">
+      <div class="ind-val good">25.2</div>
+      <div class="ind-unit">U/ml</div>
+      <div class="ind-ref">参考 10–80</div>
+    </div>
+    <div class="range-wrap">
+      <div class="range-track">
+        <div class="range-zone" style="left:0%;width:100%"></div>
+        <div class="range-dot good" style="left:20%"></div>
+      </div>
+    </div>
+    <div class="expand-panel">
+      <div class="expand-mode owner-panel">
+        <div class="expand-label owner">🐶 宠主版解读</div>
+        <div class="owner-box">SOD是体内最重要的"自由基清道夫"，旺财的SOD值正常，说明细胞的第一道防线完好。这有助于预防关节炎、延缓衰老！</div>
+      </div>
+      <div class="expand-mode vet-panel">
+        <div class="expand-label vet">🩺 兽医版解读</div>
+        <div class="vet-box">SOD 25.2 U/ml位于参考下限附近，功能性抗氧化储备尚可，但可结合年龄和品种特征动态监测。金毛犬在5-7岁时氧化应激负荷逐渐增加，建议在下次复测时重点关注。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="indicator-card good" onclick="toggleCard(this)">
+    <div class="ind-top">
+      <div class="ind-left">
+        <div class="ind-name">谷胱甘肽过氧化物酶</div>
+        <div class="ind-name-en">GSH-PX</div>
+      </div>
+      <span class="ind-status good">✓ 正常</span>
+    </div>
+    <div class="ind-value-row">
+      <div class="ind-val good">199.6</div>
+      <div class="ind-unit">U/ml</div>
+      <div class="ind-ref">参考 150–270</div>
+    </div>
+    <div class="range-wrap">
+      <div class="range-track">
+        <div class="range-zone" style="left:0%;width:100%"></div>
+        <div class="range-dot good" style="left:42%"></div>
+      </div>
+    </div>
+    <div class="expand-panel">
+      <div class="expand-mode owner-panel">
+        <div class="expand-label owner">🐶 宠主版解读</div>
+        <div class="owner-box">这是旺财对抗脂质过氧化的关键酶，值处于理想中间范围，说明细胞膜保护功能良好！</div>
+      </div>
+      <div class="expand-mode vet-panel">
+        <div class="expand-label vet">🩺 兽医版解读</div>
+        <div class="vet-box">GSH-PX 199.6 U/ml处于正常中值，硒依赖性酶功能完整，脂质过氧化物清除能力良好，细胞膜完整性维护正常。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="indicator-card good" onclick="toggleCard(this)">
+    <div class="ind-top">
+      <div class="ind-left">
+        <div class="ind-name">谷胱甘肽</div>
+        <div class="ind-name-en">GSH</div>
+      </div>
+      <span class="ind-status good">✓ 正常</span>
+    </div>
+    <div class="ind-value-row">
+      <div class="ind-val good">15.3</div>
+      <div class="ind-unit">pg/ml</div>
+      <div class="ind-ref">参考 4–20</div>
+    </div>
+    <div class="expand-panel">
+      <div class="expand-mode owner-panel">
+        <div class="expand-label owner">🐶 宠主版解读</div>
+        <div class="owner-box">谷胱甘肽是体内最强的解毒和抗氧化物质，旺财的GSH值很理想，说明肝脏解毒功能和免疫保护能力都很好！</div>
+      </div>
+      <div class="expand-mode vet-panel">
+        <div class="expand-label vet">🩺 兽医版解读</div>
+        <div class="vet-box">GSH 15.3 pg/ml处于正常范围上中段，非蛋白巯基化合物储备充足，肝细胞生物转化功能正常，DNA和蛋白质受氧化损伤风险低。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="indicator-card good" onclick="toggleCard(this)">
+    <div class="ind-top">
+      <div class="ind-left">
+        <div class="ind-name">丙二醛（脂质过氧化）</div>
+        <div class="ind-name-en">MDA</div>
+      </div>
+      <span class="ind-status good">✓ 正常</span>
+    </div>
+    <div class="ind-value-row">
+      <div class="ind-val good">2.9</div>
+      <div class="ind-unit">mmol/mL</div>
+      <div class="ind-ref">参考 1–10</div>
+    </div>
+    <div class="range-wrap">
+      <div class="range-track">
+        <div class="range-zone" style="left:0%;width:100%"></div>
+        <div class="range-dot good" style="left:19%"></div>
+      </div>
+    </div>
+    <div class="expand-panel">
+      <div class="expand-mode owner-panel">
+        <div class="expand-label owner">🐶 宠主版解读</div>
+        <div class="owner-box">MDA是细胞受自由基攻击后产生的"损伤标记"，旺财的MDA值低，说明细胞膜受到的氧化损伤很少，皮肤和器官的健康状态良好！</div>
+      </div>
+      <div class="expand-mode vet-panel">
+        <div class="expand-label vet">🩺 兽医版解读</div>
+        <div class="vet-box">MDA 2.9 mmol/mL处于参考范围低值，脂质过氧化程度轻微，细胞膜磷脂完整性良好，与GSH-PX正常值相互印证，氧化应激系统处于有效平衡状态。</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ ORGANIC ACIDS ════ -->
+<div class="view" id="view-acid">
+
+  <div class="owner-panel" id="owner-acid">
+    <div class="friendly-msg">
+      <div class="friendly-emoji">🧪</div>
+      <div class="friendly-text">
+        有机酸检测发现旺财的<strong>肠道菌群有轻度失调</strong>，以及一些代谢指标需要关注。这就像给旺财的"代谢引擎"做了全面检查，找到了几个需要调整的地方。
+      </div>
+    </div>
+  </div>
+
+  <!-- Groups -->
+  <div class="oa-group">
+    <div class="oa-group-head" onclick="toggleOAGroup(this)">
+      <div class="oa-group-name">🦠 肠道菌群标志</div>
+      <span class="oa-group-badge has-warn">1项偏高</span>
+    </div>
+    <div class="oa-group-items">
+      <div class="oa-item">
+        <div class="oa-dot good"></div>
+        <div class="oa-name">柠苹酸 Citramalic</div>
+        <div class="oa-val good">1.52</div>
+        <div class="oa-ref">≤3.6</div>
+      </div>
+      <div class="oa-item">
+        <div class="oa-dot good"></div>
+        <div class="oa-name">阿拉伯糖 Arabinose</div>
+        <div class="oa-val good">11.20</div>
+        <div class="oa-ref">≤20</div>
+      </div>
+      <div class="oa-item">
+        <div class="oa-dot warn"></div>
+        <div class="oa-name">二羟基苯丙酸 DHPPA</div>
+        <div class="oa-val warn">1.59 ↑</div>
+        <div class="oa-ref">≤0.73</div>
+      </div>
+      <div style="padding:10px 16px;background:var(--bone-pale);border-top:1px solid var(--border)">
+        <div class="owner-panel" style="font-size:12px;color:#7A4C00;line-height:1.6">🐶 <strong>DHPPA偏高</strong>提示肠道中某类细菌过度生长，可能影响消化功能，建议增加益生菌补充。</div>
+        <div class="vet-panel" style="font-size:12px;color:var(--navy);line-height:1.6">🩺 <strong>DHPPA 1.59（↑ 参考≤0.73）</strong>：梭状芽孢杆菌代谢产物升高，提示肠道厌氧菌失调，可能伴随肠道屏障功能下降，建议益生菌干预（乳酸菌/双歧杆菌）。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="oa-group">
+    <div class="oa-group-head" onclick="toggleOAGroup(this)">
+      <div class="oa-group-name">⚡ 三羧酸循环（能量代谢）</div>
+      <span class="oa-group-badge has-warn">1项偏高</span>
+    </div>
+    <div class="oa-group-items">
+      <div class="oa-item">
+        <div class="oa-dot good"></div>
+        <div class="oa-name">丁二酸 Succinic</div>
+        <div class="oa-val good">1.96</div>
+        <div class="oa-ref">≤12</div>
+      </div>
+      <div class="oa-item">
+        <div class="oa-dot warn"></div>
+        <div class="oa-name">苹果酸 Malic</div>
+        <div class="oa-val warn">2.61 ↑</div>
+        <div class="oa-ref">≤2.2</div>
+      </div>
+      <div class="oa-item">
+        <div class="oa-dot good"></div>
+        <div class="oa-name">柠檬酸 Citric</div>
+        <div class="oa-val good">73.02</div>
+        <div class="oa-ref">59–440</div>
+      </div>
+      <div style="padding:10px 16px;background:var(--bone-pale);border-top:1px solid var(--border)">
+        <div class="owner-panel" style="font-size:12px;color:#7A4C00;line-height:1.6">🐶 苹果酸轻微偏高，说明旺财的能量转换效率有轻微下降，可能表现为运动后更容易疲惫。</div>
+        <div class="vet-panel" style="font-size:12px;color:var(--navy);line-height:1.6">🩺 苹果酸2.61（↑ 参考≤2.2），提示TCA循环苹果酸脱氢酶环节效率下降，可能与B2（FAD）辅因子不足相关，建议补充B族维生素复合物。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="oa-group">
+    <div class="oa-group-head" onclick="toggleOAGroup(this)">
+      <div class="oa-group-name">🧬 嘧啶代谢（叶酸相关）</div>
+      <span class="oa-group-badge has-warn">1项偏高</span>
+    </div>
+    <div class="oa-group-items">
+      <div class="oa-item">
+        <div class="oa-dot good"></div>
+        <div class="oa-name">尿嘧啶 Uracil</div>
+        <div class="oa-val good">0.29</div>
+        <div class="oa-ref">≤6.9</div>
+      </div>
+      <div class="oa-item">
+        <div class="oa-dot warn"></div>
+        <div class="oa-name">胸腺嘧啶 Thymine</div>
+        <div class="oa-val warn">1.12 ↑</div>
+        <div class="oa-ref">≤0.68</div>
+      </div>
+      <div style="padding:10px 16px;background:var(--bone-pale);border-top:1px solid var(--border)">
+        <div class="owner-panel" style="font-size:12px;color:#7A4C00;line-height:1.6">🐶 这个指标偏高与叶酸代谢有关，可以通过增加绿叶蔬菜的摄取来改善（当然要是适合狗狗吃的蔬菜）。</div>
+        <div class="vet-panel" style="font-size:12px;color:var(--navy);line-height:1.6">🩺 胸腺嘧啶1.12（↑ 参考≤0.68），提示嘧啶合成/降解失衡，可能与叶酸代谢通路受阻相关，建议补充活性叶酸（5-MTHF形式）及VB12。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="oa-group">
+    <div class="oa-group-head" onclick="toggleOAGroup(this)">
+      <div class="oa-group-name">💊 营养指标</div>
+      <span class="oa-group-badge has-bad">1项偏低</span>
+    </div>
+    <div class="oa-group-items">
+      <div class="oa-item">
+        <div class="oa-dot good"></div>
+        <div class="oa-name">抗坏血酸 Ascorbic</div>
+        <div class="oa-val good">54.24</div>
+        <div class="oa-ref">10–200</div>
+      </div>
+      <div class="oa-item">
+        <div class="oa-dot bad"></div>
+        <div class="oa-name">磷酸 Phosphoric</div>
+        <div class="oa-val bad">560.21 ↓</div>
+        <div class="oa-ref">1000–4900</div>
+      </div>
+      <div style="padding:10px 16px;background:var(--ox-pale);border-top:1px solid var(--border)">
+        <div class="owner-panel" style="font-size:12px;color:#8A1A26;line-height:1.6">🐶 磷酸偏低，加上骨代谢中维生素D偏低，这两个一起影响骨骼健康。磷是骨骼的重要组成成分，建议兽医评估饮食中的磷摄取是否足够。</div>
+        <div class="vet-panel" style="font-size:12px;color:var(--navy);line-height:1.6">🩺 尿磷酸560.21（↓ 参考1000-4900），提示磷代谢异常，可能与VD缺乏导致的肾小管磷重吸收减少相关，同时需排除PTH代偿性升高导致的尿磷增多。结合骨钙素偏低，骨矿化不足风险增加。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="oa-group">
+    <div class="oa-group-head" onclick="toggleOAGroup(this)">
+      <div class="oa-group-name">✅ 正常指标</div>
+      <span class="oa-group-badge all-good">均正常</span>
+    </div>
+    <div class="oa-group-items oa-group-hidden">
+      <div class="oa-item"><div class="oa-dot good"></div><div class="oa-name">乳酸 Lactic</div><div class="oa-val good">4.56</div><div class="oa-ref">0.18–44</div></div>
+      <div class="oa-item"><div class="oa-dot good"></div><div class="oa-name">高香草酸 HVA</div><div class="oa-val good">0.60</div><div class="oa-ref">0.39–2.2</div></div>
+      <div class="oa-item"><div class="oa-dot good"></div><div class="oa-name">5-HIAA</div><div class="oa-val good">0.78</div><div class="oa-ref">≤2.9</div></div>
+      <div class="oa-item"><div class="oa-dot good"></div><div class="oa-name">肌酐 Creatinine</div><div class="oa-val good">1.33</div><div class="oa-ref">0.35–2.25</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ ACTION PLAN ════ -->
+<div class="view" id="view-plan">
+
+  <!-- Retest countdown -->
+  <div class="retest-card">
+    <div class="retest-title">📅 旺财的复测计划</div>
+    <div class="retest-countdown">
+      <div class="retest-circle">
+        <div class="retest-days">90</div>
+        <div class="retest-day-label">天后复测</div>
+      </div>
+      <div class="retest-info">
+        建议在<strong style="color:var(--bone-light)">2026年6月</strong>进行第二次全套检测，评估<strong style="color:white">VD补充干预效果</strong>和<strong style="color:white">肠道菌群恢复情况</strong>。干预前后数据对比是判断效果最客观的方式。
+      </div>
+    </div>
+    <button class="retest-btn">🐾 预约复测提醒</button>
+  </div>
+
+  <!-- Priority actions -->
+  <div class="sec-label">优先处理事项</div>
+
+  <div class="action-card">
+    <div class="action-priority">🔴</div>
+    <div class="action-body">
+      <div class="action-title">立即干预：维生素D + 骨钙素双低</div>
+      <div class="action-desc">
+        <div class="owner-panel">旺财的维生素D和骨钙素都偏低，骨骼健康需要立即补充。建议每天增加户外活动，并在兽医指导下补充宠物专用VD3+K2复合补充剂。</div>
+        <div class="vet-panel">25-OHD 58.25 nmol/L + BGP 14.25 ng/ml双低，建议：VD3 400-600IU/天 × 8周，同时补充维生素K2（促进BGP活化），8周后复测骨代谢全套。</div>
+      </div>
+      <div class="action-tags">
+        <span class="action-tag bone">🦴 骨代谢</span>
+        <span class="action-tag acid">🧪 有机酸</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-card">
+    <div class="action-priority">🔴</div>
+    <div class="action-body">
+      <div class="action-title">立即处理：肠道菌群失调（DHPPA↑）</div>
+      <div class="action-desc">
+        <div class="owner-panel">DHPPA偏高说明旺财肠道里有"坏菌"过多，建议开始补充益生菌（每天）并在饮食中增加益生元（如菊粉），减少高糖零食。</div>
+        <div class="vet-panel">DHPPA 1.59（↑ 2.2倍正常上限），梭状芽孢杆菌来源代谢产物升高，建议：乳酸菌/双歧杆菌益生菌补充（犬用专用菌株）+ 低聚果糖益生元，4周后观察粪便性状改善情况。</div>
+      </div>
+      <div class="action-tags">
+        <span class="action-tag acid">🧪 有机酸</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-card">
+    <div class="action-priority">🟡</div>
+    <div class="action-body">
+      <div class="action-title">中期关注：叶酸代谢（胸腺嘧啶↑）</div>
+      <div class="action-desc">
+        <div class="owner-panel">这个指标提示旺财对叶酸的需求可能增加，可以在饮食中增加适量菠菜、花椰菜等富含叶酸的蔬菜（确认对狗狗安全的蔬菜种类）。</div>
+        <div class="vet-panel">胸腺嘧啶1.12（↑ 1.6倍正常上限），建议补充活性叶酸（L-5-MTHF）+ 甲基VB12，同时评估是否存在MTHFR基因多态性影响。</div>
+      </div>
+      <div class="action-tags">
+        <span class="action-tag acid">🧪 有机酸</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-card">
+    <div class="action-priority">🟢</div>
+    <div class="action-body">
+      <div class="action-title">保持优势：氧化压力系统全部正常</div>
+      <div class="action-desc">
+        <div class="owner-panel">旺财的抗氧化能力很棒！SOD、GSH、MDA全部正常。继续均衡饮食、规律运动，避免过度暴露在污染环境中，就能维持这个优势。</div>
+        <div class="vet-panel">SOD、GSH-PX、GSH、T-AOC、MDA全部在参考范围内，氧化应激系统处于平衡状态，无需特殊干预，建议年度复查维持监测。</div>
+      </div>
+      <div class="action-tags">
+        <span class="action-tag ox">⚡ 氧化压力</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recommended next tests -->
+  <div class="sec-label">推荐搭配检测</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+    <div style="background:white;border:1.5px dashed var(--border);border-radius:12px;padding:14px;text-align:center">
+      <div style="font-size:24px;margin-bottom:6px">🦴</div>
+      <div style="font-size:12px;font-weight:800;color:var(--ink)">骨密度影像学</div>
+      <div style="font-size:10px;color:var(--slate);margin-top:4px;line-height:1.5">结合代谢指标<br>评估实际骨密度</div>
+    </div>
+    <div style="background:white;border:1.5px dashed var(--border);border-radius:12px;padding:14px;text-align:center">
+      <div style="font-size:24px;margin-bottom:6px">🦠</div>
+      <div style="font-size:12px;font-weight:800;color:var(--ink)">肠道菌群检测</div>
+      <div style="font-size:10px;color:var(--slate);margin-top:4px;line-height:1.5">精准识别失调<br>菌群种类</div>
+    </div>
+    <div style="background:white;border:1.5px dashed var(--border);border-radius:12px;padding:14px;text-align:center">
+      <div style="font-size:24px;margin-bottom:6px">🧬</div>
+      <div style="font-size:12px;font-weight:800;color:var(--ink)">氨基酸分析</div>
+      <div style="font-size:10px;color:var(--slate);margin-top:4px;line-height:1.5">配合营养师<br>优化日常饮食</div>
+    </div>
+    <div style="background:white;border:1.5px dashed var(--border);border-radius:12px;padding:14px;text-align:center">
+      <div style="font-size:24px;margin-bottom:6px">📊</div>
+      <div style="font-size:12px;font-weight:800;color:var(--ink)">90天后复测</div>
+      <div style="font-size:10px;color:var(--slate);margin-top:4px;line-height:1.5">验证干预效果<br>形成数据闭环</div>
+    </div>
+  </div>
+
+  <!-- Footer disclaimer -->
+  <div style="background:var(--slate-pale);border-radius:12px;padding:12px 14px;font-size:11px;color:var(--slate);line-height:1.7;text-align:center">
+    本报告检测结果只对所接收样本负责<br>
+    请在兽医指导下使用本报告的检测结果<br>
+    泊迈生物医学检测（苏州）有限公司
+  </div>
+</div>
+
+</div><!-- /scroll-area -->
+
+<script>
+let currentMode = 'owner';
+let currentTab = 'overview';
+
+function setMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', ['owner','vet'][i] === mode);
+  });
+  // Show/hide panels
+  document.querySelectorAll('.owner-panel').forEach(p => {
+    p.classList.toggle('hidden', mode === 'vet');
+  });
+  document.querySelectorAll('.vet-panel').forEach(p => {
+    p.classList.toggle('visible', mode === 'vet');
+  });
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + tab).classList.add('active');
+  document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+  const tabMap = {overview:0, bone:1, ox:2, acid:3, plan:4};
+  document.querySelectorAll('.tab-item')[tabMap[tab]]?.classList.add('active');
+  document.getElementById('scroll-area').scrollTop = 0;
+}
+
+function toggleCard(card) {
+  card.classList.toggle('open');
+}
+
+function toggleOAGroup(head) {
+  const items = head.nextElementSibling;
+  items.classList.toggle('oa-group-hidden');
+}
+
+// Animate bars on load
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.querySelectorAll('.hbar-fill[data-w]').forEach(bar => {
+      bar.style.width = bar.dataset.w;
+    });
+  }, 400);
+});
+
+// Open first bone card by default
+document.querySelector('.indicator-card.open')?.classList.add('open');
+</script>
+</body>
+</html>
